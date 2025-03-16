@@ -20,7 +20,7 @@ jobs:
 
 deploy: 
     needs: build
-    runs-on: frontend_ec2    
+    runs-on: ubuntu-latest    
     steps:
       - name: Pull image from docker hub
         run: docker pull harkirat04/dashmesh_web:latest 
