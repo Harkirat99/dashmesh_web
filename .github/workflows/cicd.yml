@@ -17,14 +17,14 @@ jobs:
         run: docker build -t harkirat04/dashmesh_web .
       - name: Publish image to docker hub
         run: docker push harkirat04/dashmesh_web:latest   
-
-deploy: 
-    needs: build
-    runs-on: ubuntu-latest    
-    steps:
-      - name: Pull image from docker hub
-        run: docker pull harkirat04/dashmesh_web:latest 
-      - name: Delete Old Container
-        run: docker rm -f reactContainer
-      - name: Run docker container
-        run: docker run -d -p 3000:80 --name reactContainer harkirat04/dashmesh_web
+        
+  deploy: 
+      needs: build
+      runs-on: frontend_ec2    
+      steps:
+        - name: Pull image from docker hub
+          run: docker pull harkirat04/dashmesh_web:latest 
+        - name: Delete Old Container
+          run: docker rm -f reactContainer
+        - name: Run docker container
+          run: docker run -d -p 3000:80 --name reactContainer harkirat04/dashmesh_web
