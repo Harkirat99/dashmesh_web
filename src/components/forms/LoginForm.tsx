@@ -1,3 +1,4 @@
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,18 +10,45 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/index';
+import { loginUser } from "../../store/slices/authSlice";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const handleSubmit = (e: any) => {
+
+  const { loading } = useSelector((state: RootState) => state.auth);
+
+  const [formData, setFormData] = useState<{ email: string; password: string }>({
+    email: '',
+    password: '',
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData({ 
+      ...formData, 
+      [e.target.name]: e.target.value 
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("Sumitted form");
-    navigate("/dasboard");
-  }
+    try {
+      await dispatch(loginUser(formData)).unwrap();
+      toast("Logged in successfully");
+      navigate('/dashboard')
+    } catch (err) {
+      toast.error(err?.toString());
+    }
+  };
+ 
 
   return (
     <div className={cn("flex flex-col gap-", className)} {...props}>
@@ -39,8 +67,11 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="m@example.com"
                   required
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
               <div className="grid gap-2">
@@ -53,9 +84,16 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input 
+                  id="password" 
+                  type="password"
+                  name="password" 
+                  required 
+                  value={formData.password}
+                  onChange={handleChange} 
+                />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" loading={loading}>
                 Login
               </Button>
             </div>

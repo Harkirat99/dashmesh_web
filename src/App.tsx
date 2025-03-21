@@ -7,14 +7,20 @@ import Products from "@/pages/Products"
 import Transactions from "@/pages/Transactions"
 import NotFound from "@/pages/NotFound"
 import Login from "@/pages/Login"
+import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider defaultTheme="system" storageKey="ui-theme">
         <Routes>
-        <Route index element={<Login />} />
-          <Route path="/" element={<Layout />}>
-            <Route path="dasboard" element={<Dashboard />} />
+        <Route index  path="/login" element={<Login />} />
+          <Route path="/" element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="products" element={<Products />} />
             <Route path="transactions" element={<Transactions />} />
