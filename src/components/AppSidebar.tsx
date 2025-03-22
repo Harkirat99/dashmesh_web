@@ -21,6 +21,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import { useDispatch } from 'react-redux';
+import { logout } from "../store/slices/authSlice"
 
 const navigationItems = [
   {
@@ -29,9 +31,9 @@ const navigationItems = [
     href: "/dasboard",
   },
   {
-    title: "Users",
+    title: "Customers",
     icon: Users,
-    href: "/users",
+    href: "/customers",
   },
   {
     title: "Products",
@@ -51,9 +53,14 @@ const navigationItems = [
 ]
 
 const AppSidebar = () => {
-  const location = useLocation()
+  const location = useLocation();
+  const dispatch = useDispatch();
   const pathname = location.pathname
 
+  const handleLogout = () => {
+    dispatch(logout());
+  }
+  
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -65,8 +72,7 @@ const AppSidebar = () => {
                   <LayoutDashboard className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Admin Panel</span>
-                  <span className="text-xs text-muted-foreground">v1.0.0</span>
+                  <span className="font-semibold">Dashmesh Treding</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -108,7 +114,7 @@ const AppSidebar = () => {
               <DropdownMenuItem>Profile</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

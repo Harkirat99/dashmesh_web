@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
 import Layout from "@/components/Layout"
 import Dashboard from "@/pages/Dashboard"
-import Users from "@/pages/Users"
+import Customers from "@/pages/Customers"
 import Products from "@/pages/Products"
 import Transactions from "@/pages/Transactions"
 import NotFound from "@/pages/NotFound"
@@ -15,13 +15,13 @@ function App() {
       <ThemeProvider defaultTheme="system" storageKey="ui-theme">
         <Routes>
         <Route index  path="/login" element={<Login />} />
-          <Route path="/" element={
+          < Route path="/" element={
               <ProtectedRoute>
                 <Layout />
               </ProtectedRoute>
             }>
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="users" element={<Users />} />
+            <Route path="customers" element={<Customers />} />
             <Route path="products" element={<Products />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="*" element={<NotFound />} />

@@ -11,7 +11,6 @@ const Layout = () => {
   // Load sidebar state from localStorage on component mount
   useEffect(() => {
     const savedState = localStorage.getItem("sidebar_state");
-    console.log("CLICKED")
     if (savedState) {
       setDefaultOpen(savedState === "true")
     }

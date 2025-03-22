@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, PersistConfig } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './slices/authSlice';
+import customerReducer from './slices/customerSlice';
+
 
 type RootState = ReturnType<typeof store.getState>;
 type AppDispatch = typeof store.dispatch;
@@ -17,6 +19,7 @@ const persistedReducer = persistReducer(persistConfig, authReducer);
 export const store: any = configureStore({
   reducer: {
     auth: persistedReducer,
+    customer: customerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

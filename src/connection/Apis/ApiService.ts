@@ -11,6 +11,7 @@ class ApiService {
   async get<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
     try {
       const response: AxiosResponse<T> = await this.api.get(endpoint, { params });
+        console.log("EERERE", response.data)
       return response.data;
     } catch (error: any) {
       throw error.response?.data || error;
