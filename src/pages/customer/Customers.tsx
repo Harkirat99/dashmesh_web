@@ -60,7 +60,7 @@ const Customers = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {loading
+                {loading 
                   ? Array.from({ length: 5 }).map((_, index) => (
                       <TableRow key={`loading-${index}`}>
                         <TableCell>
@@ -77,24 +77,24 @@ const Customers = () => {
                         </TableCell>
                       </TableRow>
                     ))
-                  : data.map((item: any) => (
-                      <TableRow key={item.id} onClick={() => navigate(`${item.id}`)}>
+                  : Array.isArray(data) && data?.map((item: any) => (
+                      <TableRow key={item?.id} onClick={() => navigate(`${item?.id}`)}>
                         <TableCell className="font-medium">
-                          {item.firstName + " " + item.lastName}
+                          {item?.firstName + " " + item?.lastName}
                         </TableCell>
-                        <TableCell>{item.number}</TableCell>
-                        <TableCell>{item.address}</TableCell>
+                        <TableCell>{item?.number}</TableCell>
+                        <TableCell>{item?.address}</TableCell>
                         <TableCell>
                           <span
                             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                              item.status === "active"
+                              item?.status === "active"
                                 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                                : item.status === "inactive"
+                                : item?.status === "inactive"
                                 ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
                                 : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
                             }`}
                           >
-                            {item.status}
+                            {item?.status}
                           </span>
                         </TableCell>
                         <TableCell className="text-right">

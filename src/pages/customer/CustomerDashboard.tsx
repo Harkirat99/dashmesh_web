@@ -1,110 +1,133 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BarChart, DollarSign, ShoppingCart, Users } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Header from "@/components/Header"
+import { useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  BarChart,
+  Users,
+  IndianRupeeIcon,
+  Phone,
+  MapPin,
+  Plus,
+} from "lucide-react";
+import Header from "@/components/Header";
+import { useDispatch, useSelector } from "react-redux";
+import {  useParams } from "react-router-dom";
+import { getCustomerDetail } from "@/store/slices/customerSlice";
+import { getOrders } from "@/store/slices/orderSlice";
+import { getTransactions } from "@/store/slices/transactionSlice";
+
+import { AppDispatch, RootState } from "../../store/index";
+import TransactionTable from "@/components/modules/TransactionTable";
+import OrderTable from "@/components/modules/OrderTable";
+import { Button } from "@/components/ui/button";
+
 
 const CustomerDashboard = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams();
+  const { data } = useSelector((state: RootState) => state.customer);
+  const { data: orders, loading: ordersLoading } = useSelector((state: RootState) => state.order);
+  const { data: transactions, loading: transactionLoading } = useSelector((state: RootState) => state.transaction);
+  useEffect(() => {
+    dispatch(getCustomerDetail(`${id}`));
+    dispatch(getOrders({customer: id, limit: 10}));
+    dispatch(getTransactions({customer: id, limit: 10}));
+  }, []);
+
   return (
     <>
       <Header title="Dashboard" />
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-        <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Customer Dashboard</h2>
-          <div className="flex items-center space-x-2">
-            <Tabs defaultValue="overview" className="space-y-4">
-              <TabsList>
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                <TabsTrigger value="reports">Reports</TabsTrigger>
-              </TabsList>
-            </Tabs>
+        <Card className="p-6">
+          <div className="flex items-center justify-between space-y-2">
+            <div className="space-y-1">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Arun Kumar S/O Surinder Kumar
+              </h2>
+              
+            </div>
+            <div>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              <p className="tracking-tight">New Jhinda, Assandh, Karnal</p>
+            </div>
+            <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <p className="tracking-tight">+91 8307213553</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <p className="tracking-tight">+91 7988118005</p>
+              </div>
+              
+            </div>
+           
           </div>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        </Card>
+
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$45,231.89</div>
-              <p className="text-xs text-muted-foreground">+20.1% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+2350</div>
-              <p className="text-xs text-muted-foreground">+180.1% from last month</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sales</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Amount
+              </CardTitle>
               <BarChart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+12,234</div>
-              <p className="text-xs text-muted-foreground">+19% from last month</p>
+              <div className="text-2xl font-bold">₹{data?.totalAmount}</div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total Due</CardTitle>
+              <IndianRupeeIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">+573</div>
-              <p className="text-xs text-muted-foreground">+201 since last hour</p>
+              <div className="text-2xl font-bold">
+                ₹{data?.totalAmount - data?.paidAmount}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">₹{data?.paidAmount}</div>
             </CardContent>
           </Card>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
-            <CardHeader>
-              <CardTitle>Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="pl-2">
-              <div className="h-[200px] w-full bg-muted/20 rounded-md flex items-center justify-center text-muted-foreground">
-                Chart placeholder
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-3">
-            <CardHeader>
-              <CardTitle>Recent Sales</CardTitle>
-              <CardDescription>You made 265 sales this month.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-8">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center">
-                    <Avatar className="h-9 w-9 mr-3">
-                      <AvatarImage src={`/placeholder.svg?height=36&width=36`} alt="Avatar" />
-                      <AvatarFallback>
-                        {String.fromCharCode(65 + i)}
-                        {String.fromCharCode(75 + i)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium leading-none">Customer {i + 1}</p>
-                      <p className="text-sm text-muted-foreground">customer{i + 1}@example.com</p>
-                    </div>
-                    <div className="ml-auto font-medium">+${(Math.random() * 1000).toFixed(2)}</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
+        <div className="flex items-center justify-between">
+          <h4 className="text-2xl font-bold tracking-tight">
+            Recent Transactions
+          </h4>
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+              Add Transaction
+          </Button>
+        </div>
+        <TransactionTable data={transactions} loading={transactionLoading} />
+        <div className="flex items-center justify-between">
+          <h4 className="text-2xl font-bold tracking-tight">
+            Recent Orders
+          </h4>
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+              Add Order
+          </Button>
+        </div>
+        <OrderTable data={orders} loading={ordersLoading}/>
       </div>
+     
     </>
-  )
-}
+  );
+};
 
-export default CustomerDashboard
-
+export default CustomerDashboard;
