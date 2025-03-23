@@ -1,27 +1,33 @@
-import { useEffect, useState } from 'react';
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Plus, Search } from "lucide-react"
-import Header from "@/components/Header"
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Plus, Search } from "lucide-react";
+import Header from "@/components/Header";
+import { useDispatch, useSelector } from "react-redux";
 import { getCustomers } from "../store/slices/customerSlice";
-import { AppDispatch, RootState } from '../store/index';
-import { CustomerForm } from '@/components/forms/CustomerForm';
+import { AppDispatch, RootState } from "../store/index";
+import { CustomerForm } from "@/components/forms/CustomerForm";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Customers = () => {
-
   const dispatch = useDispatch<AppDispatch>();
-  const [ open, setOpen ] = useState(false);
- 
-  const { data } = useSelector((state: RootState) => state.customer);
+  const [open, setOpen] = useState(false);
+
+  const { data, loading } = useSelector((state: RootState) => state.customer);
 
   useEffect(() => {
     dispatch(getCustomers({}));
   }, []);
 
-  
   return (
     <>
       <Header title="Customers" />
@@ -53,40 +59,58 @@ const Customers = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.map((item: any) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.firstName + " " + item.lastName}</TableCell>
-                    <TableCell>{item.number}</TableCell>
-                    <TableCell>{item.address}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          item.status === "active"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                            : item.status === "inactive"
-                              ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                              : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm">
-                        Edit
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {loading
+                  ? Array.from({ length: 5 }).map((_, index) => (
+                      <TableRow key={`loading-${index}`}>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[80px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[150px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[200px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[100px]" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : data.map((item: any) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">
+                          {item.firstName + " " + item.lastName}
+                        </TableCell>
+                        <TableCell>{item.number}</TableCell>
+                        <TableCell>{item.address}</TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                              item.status === "active"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                : item.status === "inactive"
+                                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="sm">
+                            Edit
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
-        <CustomerForm open={open} type="add" setOpen={setOpen}/>
+        <CustomerForm open={open} type="add" setOpen={setOpen} />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Customers
-
+export default Customers;
