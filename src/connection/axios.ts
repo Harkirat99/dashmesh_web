@@ -1,17 +1,13 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-interface User {
-  id: string;
-  username: string;
-  email: string;
-}
-
 interface AuthResponse {
-  user: User;
-  accessToken: string;
-  refreshToken: string;
+    access: {
+      token: string,
+    },
+    refresh: {
+      token: string,
+    }
 }
-
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
@@ -36,9 +32,11 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const { data } = await api.post<AuthResponse>('/refresh-token', { refreshToken });
-        localStorage.setItem('accessToken', data.accessToken);
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        const response = await api.post<AuthResponse>('auth/refresh-tokens', { refreshToken });
+        const { access, refresh } = response.data;
+        localStorage.setItem('accessToken', access.token);
+        localStorage.setItem('refreshToken', refresh.token);
+        originalRequest.headers.Authorization = `Bearer ${ access.token}`;
         return api(originalRequest);
       } catch (refreshError) {
         localStorage.clear();
@@ -51,12 +49,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-
-// export const registerUser = async (userData: { username: string; email: string; password: string }): Promise<AuthResponse> =>
-//   api.post('/register', userData).then((res) => res.data);
-
-// export const loginUser = async (credentials: { email: string; password: string }): Promise<AuthResponse> =>
-//   api.post('/login', credentials).then((res) => res.data);
-
-// export const refreshToken = async (token: string): Promise<AuthResponse> =>
-//   api.post('/refresh-token', { refreshToken: token }).then((res) => res.data);

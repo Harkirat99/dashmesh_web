@@ -13,16 +13,17 @@ import {
 import { Plus, Search } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { getCustomers } from "../store/slices/customerSlice";
-import { AppDispatch, RootState } from "../store/index";
+import { getCustomers } from "@/store/slices/customerSlice";
+import { AppDispatch, RootState } from "../../store/index";
 import { CustomerForm } from "@/components/forms/CustomerForm";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useNavigate } from "react-router-dom";
 
 const Customers = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [open, setOpen] = useState(false);
-
+  const navigate = useNavigate();
   const { data, loading } = useSelector((state: RootState) => state.customer);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     dispatch(getCustomers({}));
@@ -77,7 +78,7 @@ const Customers = () => {
                       </TableRow>
                     ))
                   : data.map((item: any) => (
-                      <TableRow key={item.id}>
+                      <TableRow key={item.id} onClick={() => navigate(`${item.id}`)}>
                         <TableCell className="font-medium">
                           {item.firstName + " " + item.lastName}
                         </TableCell>

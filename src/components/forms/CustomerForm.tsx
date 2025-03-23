@@ -12,8 +12,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store/index";
-import { createCustomer, getCustomers } from "../../store/slices/customerSlice";
+import { AppDispatch } from "@/store/index";
+import { createCustomer, getCustomers } from "@/store/slices/customerSlice";
 import { toast } from "sonner";
 
 interface FormProps {

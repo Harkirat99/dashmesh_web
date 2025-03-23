@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/index';
-import { loginUser } from "../../store/slices/authSlice";
+import { AppDispatch, RootState } from '@/store/index';
+import { loginUser } from "@/store/slices/authSlice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 

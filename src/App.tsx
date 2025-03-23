@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
 import Layout from "@/components/Layout"
 import Dashboard from "@/pages/Dashboard"
-import Customers from "@/pages/Customers"
+import Customers from "@/pages/customer/Customers"
+import CustomerDashboard from "@/pages/customer/CustomerDashboard"
 import Products from "@/pages/Products"
 import Transactions from "@/pages/Transactions"
 import NotFound from "@/pages/NotFound"
@@ -22,6 +23,7 @@ function App() {
             }>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="customers" element={<Customers />} />
+            <Route path="customers/:id" element={<CustomerDashboard />} />
             <Route path="products" element={<Products />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="*" element={<NotFound />} />
