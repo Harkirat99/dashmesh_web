@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -24,6 +24,7 @@ import { AppDispatch, RootState } from "../../store/index";
 import TransactionTable from "@/components/modules/TransactionTable";
 import OrderTable from "@/components/modules/OrderTable";
 import { Button } from "@/components/ui/button";
+import { AddOrder } from "@/components/forms/AddOrder";
 
 
 const CustomerDashboard = () => {
@@ -32,6 +33,8 @@ const CustomerDashboard = () => {
   const { data } = useSelector((state: RootState) => state.customer);
   const { data: orders, loading: ordersLoading } = useSelector((state: RootState) => state.order);
   const { data: transactions, loading: transactionLoading } = useSelector((state: RootState) => state.transaction);
+  const [addOrder, setAddOrder] = useState(false);
+
   useEffect(() => {
     dispatch(getCustomerDetail(`${id}`));
     dispatch(getOrders({customer: id, limit: 10}));
@@ -118,14 +121,14 @@ const CustomerDashboard = () => {
           <h4 className="text-2xl font-bold tracking-tight">
             Recent Orders
           </h4>
-          <Button>
+          <Button onClick={() => setAddOrder(!addOrder)}>
             <Plus className="mr-2 h-4 w-4" />
               Add Order
           </Button>
         </div>
         <OrderTable data={orders} loading={ordersLoading}/>
       </div>
-     
+     <AddOrder open={addOrder} setOpen={setAddOrder} type="add" />
     </>
   );
 };
