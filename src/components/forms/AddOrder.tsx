@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -42,12 +42,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "../ui/card";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/index";
 
 interface FormProps {
   open: boolean;
   type: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
+
+interface Item {
+  quantity: number;
+  productName: string;
+  unitAmount: number;
+  unit: string;
+  actualPrice: string;
+  basePrice: string;
+}
+
 const defaultValues = {
   firstName: "",
   lastName: "",
@@ -59,9 +71,12 @@ const defaultValues = {
 };
 export function AddOrder({ open, type, setOpen }: FormProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { data } = useSelector((state: RootState) => state.customer);
   const [formData, setFormData] = useState(defaultValues);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [quantity, setQuantity] = useState(1);
+  const [isNew, setIsNew] = useState(false);
+  const [defaultCustomer, setDefaultCustomer] = useState("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -101,11 +116,10 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
 
   const itemForm = useForm({
     defaultValues: {
-      dob: "",
-      quantity: 0,
+      quantity: 1,
       productName: "",
-      unitAmount: "",
-      unit: "",
+      unitAmount: 1,
+      unit: "kg",
       actualPrice: "",
       basePrice: "",
     },
@@ -141,11 +155,26 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
   };
 
   const handleSaveItems = async () => {
-    // e.preventDefault();
-    // alert("HELLLO")
-    console.log("itemForm");
-    return true;
+    const existingItems = [...items];
+    existingItems.push(itemForm.getValues());
+    setItems(existingItems);
+    itemForm.reset();
+    setQuantity(1);
+    setIsNew(false);
   };
+
+  const manageDefaultCustomer = () => {
+    console.log(typeof data);
+    if (typeof data == "object") {
+      setDefaultCustomer(data?._id);
+    }
+  };
+  useEffect(() => {
+    if (open) {
+      manageDefaultCustomer();
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[50%]">
@@ -164,18 +193,26 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             {/* Customer Selection */}
             <div className="grid gap-2">
               <Label htmlFor="text">Customer *</Label>
-              <Select>
+              <Select
+                defaultValue={defaultCustomer}
+                disabled={typeof data == "object"}
+              >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a fruit" />
+                  <SelectValue placeholder="Select a Customer" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Fruits</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
+                    {typeof data == "object" ? (
+                      <SelectItem value={data?._id}>
+                        {data?.firstName + " " + data?.lastName}
+                      </SelectItem>
+                    ) : (
+                      data.map((item: any) => (
+                        <SelectItem value={item?._id}>
+                          {item?.firstName + " " + item?.lastName}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -222,219 +259,219 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             />
             <div className="col-span-2 w-full">
               <div className="flex flex-col gap-4 w-full">
-                <Card className="p-4 shadow-sm rounded-lg w-full">
-                  <CardContent className="text-sm">
-                    <div className="flex justify-between">
-                      <p className="font-medium">Product Name</p>
-                      <p className="text-gray-500">2 × 3kg</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Base Price:</span>
-                      <span className="font-medium">$XX.XX</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Actual Price:</span>
-                      <span className="font-medium">$XX.XX</span>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="p-4 shadow-sm rounded-lg w-full">
-                  <CardContent className="text-sm">
-                    <div className="flex justify-between">
-                      <p className="font-medium">Product Name</p>
-                      <p className="text-gray-500">1 × 5kg</p>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Base Price:</span>
-                      <span className="font-medium">$XX.XX</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Actual Price:</span>
-                      <span className="font-medium">$XX.XX</span>
-                    </div>
-                  </CardContent>
-                </Card>
+                {items.map((item: Item, index: number) => (
+                  <Card className="p-4 shadow-sm rounded-lg w-full" key={index}>
+                    <CardContent className="text-sm">
+                      <div className="flex justify-between">
+                        <p className="font-medium">{item?.productName}</p>
+                        <p className="text-gray-500">
+                          {item?.quantity} × {item?.unitAmount}
+                          {item?.unit}
+                        </p>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Base Price:</span>
+                        <span className="font-medium">{item?.basePrice}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Actual Price:</span>
+                        <span className="font-medium">{item?.actualPrice}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              <div className="flex justify-end mt-4">
-                <Button>Add Item</Button>
-              </div>
+              {!isNew && (
+                <div className="flex justify-end mt-4">
+                  <Button onClick={() => setIsNew(true)}>Add Item</Button>
+                </div>
+              )}
             </div>
-
-            {/* Submit Button */}
-            {/* */}
           </form>
         </Form>
-        <Form {...itemForm}>
-          <form
-            className="grid grid-cols-2 gap-6"
-            onSubmit={itemForm.handleSubmit(handleSaveItems)}
-          >
-            <FormField
-              control={itemForm.control}
-              name="productName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Product Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter product name"
-                      className="w-full"
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={itemForm.control}
-              name="quantity"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-2">
-                  <FormLabel>Quantity</FormLabel>
-                  <div className="flex items-center gap-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={decrementQuantity}
-                      disabled={quantity <= 1}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
+        {isNew && (
+          <Form {...itemForm}>
+            <form
+              className="grid grid-cols-2 gap-6"
+              onSubmit={itemForm.handleSubmit(handleSaveItems)}
+            >
+              <FormField
+                control={itemForm.control}
+                name="productName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Product Name</FormLabel>
                     <FormControl>
                       <Input
+                        placeholder="Enter product name"
+                        className="w-full"
                         {...field}
+                        required
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="quantity"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-2">
+                    <FormLabel>Quantity</FormLabel>
+                    <div className="flex items-center gap-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={decrementQuantity}
+                        disabled={quantity <= 1}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          min={1}
+                          className="w-20 text-center"
+                          value={quantity}
+                          onChange={(e) => {
+                            const val = Number.parseInt(e.target.value);
+                            if (!isNaN(val) && val >= 1) {
+                              setQuantity(val);
+                              field.onChange(val);
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={incrementQuantity}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="unitAmount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit Amount</FormLabel>
+                    <FormControl>
+                      <Input
                         type="number"
-                        min={1}
-                        className="w-20 text-center"
-                        value={quantity}
+                        min={0}
+                        step="0.01"
+                        required
+                        placeholder="Enter unit amount"
+                        {...field}
                         onChange={(e) => {
-                          const val = Number.parseInt(e.target.value);
-                          if (!isNaN(val) && val >= 1) {
-                            setQuantity(val);
-                            field.onChange(val);
-                          }
+                          const val = Number.parseFloat(e.target.value);
+                          field.onChange(isNaN(val) ? 0 : val);
                         }}
                       />
                     </FormControl>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={incrementQuantity}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
                     >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={itemForm.control}
-              name="unitAmount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Unit Amount</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      placeholder="Enter unit amount"
-                      {...field}
-                      onChange={(e) => {
-                        const val = Number.parseFloat(e.target.value);
-                        field.onChange(isNaN(val) ? 0 : val);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={itemForm.control}
-              name="unit"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Unit</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl className={"w-full"}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select unit" />
-                      </SelectTrigger>
+                      <FormControl className={"w-full"}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select unit" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="kg">kg</SelectItem>
+                        <SelectItem value="mg">mg</SelectItem>
+                        <SelectItem value="l">l</SelectItem>
+                        <SelectItem value="g">g</SelectItem>
+                        <SelectItem value="ml">ml</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={itemForm.control}
+                name="basePrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Base Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="₹0.00"
+                        {...field}
+                        required
+                        onChange={(e) => field.onChange(e.target.value)}
+                        onBlur={(e) => {
+                          const formatted = formatPrice(e.target.value);
+                          field.onChange(formatted);
+                        }}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="kg">kg</SelectItem>
-                      <SelectItem value="mg">mg</SelectItem>
-                      <SelectItem value="l">l</SelectItem>
-                      <SelectItem value="g">g</SelectItem>
-                      <SelectItem value="ml">ml</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={itemForm.control}
-              name="basePrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Base Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="₹0.00"
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      onBlur={(e) => {
-                        const formatted = formatPrice(e.target.value);
-                        field.onChange(formatted);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Actual Price Field */}
-            <FormField
-              control={itemForm.control}
-              name="actualPrice"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Actual Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="₹0.00"
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value)}
-                      onBlur={(e) => {
-                        const formatted = formatPrice(e.target.value);
-                        field.onChange(formatted);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Submit Button */}
-            <div className="col-span-2 flex justify-end gap-2.5">
-              <Button variant="outline">Cancel</Button>
-              <Button type="submit">Submit</Button>
-            </div>
-          </form>
-        </Form>
-
+              {/* Actual Price Field */}
+              <FormField
+                control={itemForm.control}
+                name="actualPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Actual Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="₹0.00"
+                        {...field}
+                        required
+                        onChange={(e) => field.onChange(e.target.value)}
+                        onBlur={(e) => {
+                          const formatted = formatPrice(e.target.value);
+                          field.onChange(formatted);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="col-span-2 flex justify-end gap-2.5">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    itemForm.reset();
+                    setIsNew(false);
+                    setQuantity(1);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
+          </Form>
+        )}
         <div className="text-center">
           <Button type="button" className="w-[50%] ">
             Save changes
