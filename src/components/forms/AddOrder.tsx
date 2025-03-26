@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
 import { createOrder, getOrders } from "@/store/slices/orderSlice";
 import { toast } from "sonner";
@@ -41,9 +41,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "../ui/card";
-import { useSelector } from "react-redux";
 import { RootState } from "@/store/index";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { formatPrice } from "@/lib/converter";
 
 interface FormProps {
   open: boolean;
@@ -69,50 +69,9 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
   const [isNew, setIsNew] = useState(false);
   const [defaultCustomer, setDefaultCustomer] = useState("");
 
-  const handleSubmit = async () => {
-    try {
-      const formattedItems = items.map((item) => {
-        return {
-          name: item?.productName,
-          quantity: item?.quantity,
-          unit: item?.unit,
-          unitAmount: item?.unitAmount,
-          actualPrice: item?.actualPrice.slice(1),
-          basePrice: item?.basePrice.slice(1)
-        }
-      });
-
-      const payload = {
-        date: format(form.getValues().dob || Date.now(), 'yyyy-MM-dd'),
-        customer: defaultCustomer,
-        items: formattedItems
-      }
-      await dispatch(createOrder(payload)).unwrap();
-      setOpen(false);
-      resetForm();
-      await dispatch(getOrders({customer: id, limit: 10})).unwrap();
-      toast("Created successfully");
-    } catch (err) {
-      toast.error(err?.toString());
-    }
-  };
-
-  const resetForm = () => {
-    form.reset();
-    setItems([]);
-    setIsNew(false);
-    setDefaultCustomer("");
-  };
-
   const form = useForm({
     defaultValues: {
-      dob: "",
-      quantity: 0,
-      productName: "",
-      unitAmount: "",
-      unit: "",
-      actualPrice: "",
-      basePrice: "",
+      date: "",
     },
   });
 
@@ -126,6 +85,41 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       basePrice: "",
     },
   });
+
+  const handleSubmit = async () => {
+    try {
+      const formattedItems = items.map((item) => {
+        return {
+          name: item?.productName,
+          quantity: item?.quantity,
+          unit: item?.unit,
+          unitAmount: item?.unitAmount,
+          actualPrice: item?.actualPrice.slice(1),
+          basePrice: item?.basePrice.slice(1),
+        };
+      });
+
+      const payload = {
+        date: format(form.getValues().date || Date.now(), "yyyy-MM-dd"),
+        customer: defaultCustomer,
+        items: formattedItems,
+      };
+      await dispatch(createOrder(payload)).unwrap();
+      setOpen(false);
+      resetForm();
+      await dispatch(getOrders({ customer: id, limit: 10 })).unwrap();
+      toast("Created successfully");
+    } catch (err) {
+      toast.error(err?.toString());
+    }
+  };
+
+  const resetForm = () => {
+    form.reset();
+    setItems([]);
+    setIsNew(false);
+    setDefaultCustomer("");
+  };
 
   const incrementQuantity = () => {
     const newQuantity = quantity + 1;
@@ -141,21 +135,6 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
     }
   };
 
-  const formatPrice = (value: string) => {
-    // Remove all non-numeric characters except decimal point
-    const numericValue = value.replace(/[^0-9.]/g, "");
-    // Format as currency
-    if (numericValue) {
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "INR",
-        minimumFractionDigits: 2,
-      }).format(Number.parseFloat(numericValue));
-      return formatted;
-    }
-    return value;
-  };
-
   const handleSaveItems = async () => {
     const existingItems = [...items];
     existingItems.push(itemForm.getValues());
@@ -166,7 +145,6 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
   };
 
   const manageDefaultCustomer = () => {
-    console.log(typeof data);
     if (typeof data == "object") {
       setDefaultCustomer(data?._id);
     }
@@ -222,7 +200,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             </div>
             <FormField
               control={form.control}
-              name="dob"
+              name="date"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Bill date</FormLabel>
@@ -236,11 +214,9 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            format(Date.now(), "PPP")
-                          )}
+                          {field.value
+                            ? format(field.value, "PPP")
+                            : format(Date.now(), "PPP")}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>

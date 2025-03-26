@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction, Slice } from '@reduxjs/toolkit';
 import api from '../../connection/axios';
 import { handlePending, handleFulfilled, handleRejected } from '../asyncHandlers';
+import { Transaction } from "../../types/common"
 
 interface TransactionState {
   data: any | null;
@@ -20,6 +21,20 @@ export const getTransactions = createAsyncThunk<any , any, { rejectValue: string
     }
   }
 );
+
+
+export const createTransaction = createAsyncThunk<any , Transaction, { rejectValue: string }>(
+  'customer/createTransaction',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await api.post<any>('transaction', payload);
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
 
 const initialState: any = {
   data: null,
@@ -44,6 +59,10 @@ const transactionSlice: any = createSlice({
         state.data = action.payload.results;
       })
       .addCase(getTransactions.rejected, handleRejected)
+       // Transaction Create
+      .addCase(createTransaction.pending, handlePending)
+      .addCase(createTransaction.fulfilled, handleFulfilled)
+      .addCase(createTransaction.rejected, handleRejected)
   },
 })as Slice<TransactionState, typeof transactionSlice.reducers, 'transaction'> & { reducer: any };;
 

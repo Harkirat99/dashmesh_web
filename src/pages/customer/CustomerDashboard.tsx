@@ -25,6 +25,8 @@ import TransactionTable from "@/components/modules/TransactionTable";
 import OrderTable from "@/components/modules/OrderTable";
 import { Button } from "@/components/ui/button";
 import { AddOrder } from "@/components/forms/AddOrder";
+import { AddTransaction } from "@/components/forms/AddTransaction";
+
 
 
 const CustomerDashboard = () => {
@@ -34,6 +36,8 @@ const CustomerDashboard = () => {
   const { data: orders, loading: ordersLoading } = useSelector((state: RootState) => state.order);
   const { data: transactions, loading: transactionLoading } = useSelector((state: RootState) => state.transaction);
   const [addOrder, setAddOrder] = useState(false);
+  const [addTransaction, setAddTransaction] = useState(false);
+
 
   useEffect(() => {
     dispatch(getCustomerDetail(`${id}`));
@@ -111,7 +115,7 @@ const CustomerDashboard = () => {
           <h4 className="text-2xl font-bold tracking-tight">
             Recent Transactions
           </h4>
-          <Button>
+          <Button onClick={() => setAddTransaction(!addTransaction)}>
             <Plus className="mr-2 h-4 w-4" />
               Add Transaction
           </Button>
@@ -129,6 +133,7 @@ const CustomerDashboard = () => {
         <OrderTable data={orders} loading={ordersLoading}/>
       </div>
      <AddOrder open={addOrder} setOpen={setAddOrder} type="add" />
+     <AddTransaction open={addTransaction} setOpen={setAddTransaction} type="add" />
     </>
   );
 };
