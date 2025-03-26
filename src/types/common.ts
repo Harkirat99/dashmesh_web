@@ -7,3 +7,10 @@ export interface Customer {
     fatherName: string,
     status: string,
 }
+
+
+export interface Order {
+    customer: string,
+    date: string,
+    items: any
+}

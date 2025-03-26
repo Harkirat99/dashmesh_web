@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { createCustomer, getCustomers } from "@/store/slices/customerSlice";
+import { createOrder, getOrders } from "@/store/slices/orderSlice";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import {
@@ -37,13 +37,13 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "../ui/card";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/index";
+import {  useParams } from "react-router-dom";
 
 interface FormProps {
   open: boolean;
@@ -60,38 +60,37 @@ interface Item {
   basePrice: string;
 }
 
-const defaultValues = {
-  firstName: "",
-  lastName: "",
-  address: "",
-  number: "",
-  alternateNumber: "",
-  fatherName: "",
-  status: "active",
-};
 export function AddOrder({ open, type, setOpen }: FormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { data } = useSelector((state: RootState) => state.customer);
-  const [formData, setFormData] = useState(defaultValues);
+  const { id } = useParams();
   const [items, setItems] = useState<Item[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isNew, setIsNew] = useState(false);
   const [defaultCustomer, setDefaultCustomer] = useState("");
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
-      await dispatch(createCustomer(formData)).unwrap();
+      const formattedItems = items.map((item) => {
+        return {
+          name: item?.productName,
+          quantity: item?.quantity,
+          unit: item?.unit,
+          unitAmount: item?.unitAmount,
+          actualPrice: item?.actualPrice.slice(1),
+          basePrice: item?.basePrice.slice(1)
+        }
+      });
+
+      const payload = {
+        date: format(form.getValues().dob || Date.now(), 'yyyy-MM-dd'),
+        customer: defaultCustomer,
+        items: formattedItems
+      }
+      await dispatch(createOrder(payload)).unwrap();
       setOpen(false);
       resetForm();
-      await dispatch(getCustomers({})).unwrap();
+      await dispatch(getOrders({customer: id, limit: 10})).unwrap();
       toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());
@@ -99,7 +98,10 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
   };
 
   const resetForm = () => {
-    setFormData(defaultValues);
+    form.reset();
+    setItems([]);
+    setIsNew(false);
+    setDefaultCustomer("");
   };
 
   const form = useForm({
@@ -169,6 +171,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       setDefaultCustomer(data?._id);
     }
   };
+
   useEffect(() => {
     if (open) {
       manageDefaultCustomer();
@@ -194,8 +197,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             <div className="grid gap-2">
               <Label htmlFor="text">Customer *</Label>
               <Select
-                defaultValue={defaultCustomer}
                 disabled={typeof data == "object"}
+                value={defaultCustomer}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a Customer" />
@@ -222,7 +225,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
               name="dob"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Date of birth</FormLabel>
+                  <FormLabel>Bill date</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -236,7 +239,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                           {field.value ? (
                             format(field.value, "PPP")
                           ) : (
-                            <span>Pick a date</span>
+                            format(Date.now(), "PPP")
                           )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
@@ -473,7 +476,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
           </Form>
         )}
         <div className="text-center">
-          <Button type="button" className="w-[50%] ">
+          <Button type="button" className="w-[50%]" onClick={handleSubmit}>
             Save changes
           </Button>
         </div>
