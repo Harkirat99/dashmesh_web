@@ -9,7 +9,7 @@ interface AuthResponse {
     }
 }
 const api: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8000/v1",
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
 });
 
