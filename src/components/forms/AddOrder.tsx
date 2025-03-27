@@ -170,7 +170,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             // onSubmit={handleSubmit}
             onSubmit={(e) => e.preventDefault()}
           >
-            {/* Customer Selection */}
+            {/* Customer Selectio */}
             <div className="grid gap-2">
               <Label htmlFor="text">Customer *</Label>
               <Select
