@@ -155,7 +155,6 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
     }
   }, [open]);
 
-  console.log("DATA", typeof(data));
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[50%]">

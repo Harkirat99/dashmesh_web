@@ -45,6 +45,7 @@ const CustomerDashboard = () => {
     dispatch(getTransactions({customer: id, limit: 10}));
   }, []);
 
+  console.log("DATA", data);
   return (
     <>
       <Header title="Dashboard" />
@@ -53,23 +54,25 @@ const CustomerDashboard = () => {
           <div className="flex items-center justify-between space-y-2">
             <div className="space-y-1">
               <h2 className="text-3xl font-bold tracking-tight">
-                Arun Kumar S/O Surinder Kumar
+                {data?.firstName + " " + data?.lastName} {data?.fatherName ? `S/O ${data?.fatherName}` : ""} 
               </h2>
-              
             </div>
             <div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />
-              <p className="tracking-tight">New Jhinda, Assandh, Karnal</p>
+              <p className="tracking-tight">{data?.address}</p>
             </div>
             <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                <p className="tracking-tight">+91 8307213553</p>
+                <p className="tracking-tight">+91 {data?.number}</p>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                <p className="tracking-tight">+91 7988118005</p>
-              </div>
+              {data?.alternateNumber && (
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  <p className="tracking-tight">+91 {data?.alternateNumber}</p>
+                </div>
+              )}
+              
               
             </div>
            
