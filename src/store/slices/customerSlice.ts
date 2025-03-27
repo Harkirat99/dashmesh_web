@@ -13,7 +13,7 @@ interface CustomerState {
 interface SearchParams {
     search?: any;
     status?: any;
-    sortBy: any;
+    sortBy?: any;
 }
 
 export const getCustomers = createAsyncThunk<any , SearchParams, { rejectValue: string }>(

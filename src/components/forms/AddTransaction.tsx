@@ -16,6 +16,9 @@ import {
   createTransaction,
   getTransactions,
 } from "@/store/slices/transactionSlice";
+import {
+  getCustomerDetail
+} from "@/store/slices/customerSlice";
 import { toast } from "sonner";
 import {
   Select,
@@ -82,6 +85,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
       setOpen(false);
       form.reset();
       await dispatch(getTransactions({ customer: id, limit: 10 })).unwrap();
+      dispatch(getCustomerDetail(`${id}`)).unwrap();
       toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());
@@ -104,7 +108,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{type == "add" ? "Add" : "Edit"} Order</DialogTitle>
+          <DialogTitle>{type == "add" ? "Add" : "Edit"} Transaction</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form

@@ -14,6 +14,9 @@ import { Dispatch, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
 import { createOrder, getOrders } from "@/store/slices/orderSlice";
+import {
+  getCustomerDetail
+} from "@/store/slices/customerSlice";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import {
@@ -67,7 +70,6 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
   const [quantity, setQuantity] = useState(1);
   const [isNew, setIsNew] = useState(false);
   const [defaultCustomer, setDefaultCustomer] = useState("");
-
   const form = useForm({
     defaultValues: {
       date: "",
@@ -107,6 +109,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       setOpen(false);
       resetForm();
       await dispatch(getOrders({ customer: id, limit: 10 })).unwrap();
+      dispatch(getCustomerDetail(`${id}`)).unwrap();
+      
       toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());
@@ -144,7 +148,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
   };
 
   const manageDefaultCustomer = () => {
-    if (typeof data == "object") {
+    if (!Array.isArray(data)) {
       setDefaultCustomer(data?._id);
     }
   };
@@ -154,7 +158,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       manageDefaultCustomer();
     }
   }, [open]);
-
+  console.log("typeof data", data)
+  console.log("typeof data", typeof data)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[50%]">
@@ -174,17 +179,17 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             <div className="grid gap-2">
               <Label htmlFor="text">Customer *</Label>
               <Select
-                disabled={typeof data == "object"}
+                disabled={!Array.isArray(data)}
                 value={defaultCustomer}
+                onValueChange={(value) => setDefaultCustomer(value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a Customer" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {data && typeof(data) != "string" && (
-                      typeof data == "object" ? (
-                        <SelectItem value={data?._id}>
+                    {!Array.isArray(data) ? (
+                        <SelectItem value={data?.id}>
                           {data?.firstName + " " + data?.lastName}
                         </SelectItem>
                       ) : (
@@ -194,8 +199,6 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                           </SelectItem>
                         ))
                       )
-                    )
-
                     }
                   </SelectGroup>
                 </SelectContent>

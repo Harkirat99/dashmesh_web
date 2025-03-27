@@ -4,11 +4,11 @@ import Layout from "@/components/Layout"
 import Dashboard from "@/pages/Dashboard"
 import Customers from "@/pages/customer/Customers"
 import CustomerDashboard from "@/pages/customer/CustomerDashboard"
-import Products from "@/pages/Products"
 import Transactions from "@/pages/Transactions"
 import NotFound from "@/pages/NotFound"
 import Login from "@/pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute";
+import Orders from "@/pages/order/Orders";
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="customers" element={<Customers />} />
             <Route path="customers/:id" element={<CustomerDashboard />} />
-            <Route path="products" element={<Products />} />
+            <Route path="orders" element={<Orders />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="*" element={<NotFound />} />
           </Route>
