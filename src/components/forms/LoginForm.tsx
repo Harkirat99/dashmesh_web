@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/store/index';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store/index';
 import { loginUser } from "@/store/slices/authSlice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ export function LoginForm({
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const { loading } = useSelector((state: RootState) => state.auth);
+  // const { loading } = useSelector((state: RootState) => state.auth);
 
   const [formData, setFormData] = useState<{ email: string; password: string }>({
     email: '',
@@ -93,7 +93,7 @@ export function LoginForm({
                   onChange={handleChange} 
                 />
               </div>
-              <Button type="submit" className="w-full" loading={loading}>
+              <Button type="submit" className="w-full">
                 Login
               </Button>
             </div>
