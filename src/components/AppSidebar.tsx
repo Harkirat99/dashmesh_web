@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { BarChart3, LayoutDashboard, Package, ShoppingCart, Users } from "lucide-react"
+import { BarChart3, LayoutDashboard, Package, ShoppingCart, Users } from "lucide-react";
 
 import {
   Sidebar,
