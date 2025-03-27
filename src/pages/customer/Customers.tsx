@@ -24,10 +24,12 @@ const Customers = () => {
   const navigate = useNavigate();
   const { data, loading } = useSelector((state: RootState) => state.customer);
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
 
   useEffect(() => {
-    dispatch(getCustomers({}));
-  }, []);
+    dispatch(getCustomers({sortBy: "createdAt:desc", search}));
+  }, [search]);
 
   return (
     <>
@@ -45,7 +47,7 @@ const Customers = () => {
             <CardTitle>Customer Management</CardTitle>
             <div className="relative w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search customer..." className="pl-8" />
+              <Input placeholder="Search customer..." className="pl-8" value={search} onChange={(e) => setSearch(e.target.value)}/>
             </div>
           </CardHeader>
           <CardContent>

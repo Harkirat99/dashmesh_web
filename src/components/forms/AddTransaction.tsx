@@ -122,18 +122,19 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="ads">Hellp</SelectItem>
-                    {typeof data == "object" ? (
-                      <SelectItem value={data?._id}>
-                        {data?.firstName + " " + data?.lastName}
-                      </SelectItem>
-                    ) : (
-                      data.map((item: any) => (
-                        <SelectItem value={item?._id}>
-                          {item?.firstName + " " + item?.lastName}
+                    {data &&
+                      typeof data != "string" &&
+                      (typeof data == "object" ? (
+                        <SelectItem value={data?._id}>
+                          {data?.firstName + " " + data?.lastName}
                         </SelectItem>
-                      ))
-                    )}
+                      ) : (
+                        data.map((item: any) => (
+                          <SelectItem value={item?._id}>
+                            {item?.firstName + " " + item?.lastName}
+                          </SelectItem>
+                        ))
+                      ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

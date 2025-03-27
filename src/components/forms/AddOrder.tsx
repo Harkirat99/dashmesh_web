@@ -155,6 +155,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
     }
   }, [open]);
 
+  console.log("DATA", typeof(data));
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[50%]">
@@ -182,17 +183,21 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {typeof data == "object" ? (
-                      <SelectItem value={data?._id}>
-                        {data?.firstName + " " + data?.lastName}
-                      </SelectItem>
-                    ) : (
-                      data.map((item: any) => (
-                        <SelectItem value={item?._id}>
-                          {item?.firstName + " " + item?.lastName}
+                    {data && typeof(data) != "string" && (
+                      typeof data == "object" ? (
+                        <SelectItem value={data?._id}>
+                          {data?.firstName + " " + data?.lastName}
                         </SelectItem>
-                      ))
-                    )}
+                      ) : (
+                         data?.map((item: any) => (
+                          <SelectItem value={item?._id}>
+                            {item?.firstName + " " + item?.lastName}
+                          </SelectItem>
+                        ))
+                      )
+                    )
+
+                    }
                   </SelectGroup>
                 </SelectContent>
               </Select>
