@@ -70,12 +70,12 @@ const orderSlice: any = createSlice({
       })
       .addCase(getOrders.rejected, handleRejected)
       // 
-      .addCase(getOrders.pending, handlePending)
-      .addCase(getOrders.fulfilled, (state, action) => {
+      .addCase(getGlobalOrders.pending, handlePending)
+      .addCase(getGlobalOrders.fulfilled, (state, action) => {
         handleFulfilled(state);
-        state.data = action.payload.results;
+        state.data = action.payload;
       })
-      .addCase(getOrders.rejected, handleRejected)
+      .addCase(getGlobalOrders.rejected, handleRejected)
        // Order Create
       .addCase(createOrder.pending, handlePending)
       .addCase(createOrder.fulfilled, handleFulfilled)

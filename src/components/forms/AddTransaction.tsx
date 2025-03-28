@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
 import {
   createTransaction,
-  getTransactions,
+  getGlobalTransactions
 } from "@/store/slices/transactionSlice";
 import {
   getCustomerDetail
@@ -84,7 +84,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
       await dispatch(createTransaction(payload)).unwrap();
       setOpen(false);
       form.reset();
-      await dispatch(getTransactions({ customer: id, limit: 10, sortBy: "createdAt:desc" })).unwrap();
+      await dispatch(getGlobalTransactions({ customer: id })).unwrap();
       dispatch(getCustomerDetail(`${id}`)).unwrap();
       toast("Created successfully");
     } catch (err) {
@@ -93,6 +93,8 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
   };
 
   const manageDefaultCustomer = () => {
+    console.log("data", Array.isArray(data));
+    
     if (!Array.isArray(data)) {
       setDefaultCustomer(data?._id);
     }
@@ -129,7 +131,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
                   <SelectGroup>
                   {
                     !Array.isArray(data) ? (
-                        <SelectItem value={data?.id}>
+                        <SelectItem value={data?._id}>
                           {data?.firstName + " " + data?.lastName}
                         </SelectItem>
                       ) : (

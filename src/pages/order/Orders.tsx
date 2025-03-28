@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/index";
 import OrderTable from "@/components/modules/OrderTable";
-import { getOrders } from "@/store/slices/orderSlice";
+import { getGlobalOrders } from "@/store/slices/orderSlice";
 import { AddOrder } from "@/components/forms/AddOrder";
 import { getCustomers } from "@/store/slices/customerSlice";
 
@@ -19,7 +19,7 @@ const Orders = () => {
 
 
   useEffect(() => {
-    dispatch(getOrders({limit: 100000, search, sortBy: "createdAt:desc"}));
+    dispatch(getGlobalOrders({search}));
   }, [search]);
 
   useEffect(() => {

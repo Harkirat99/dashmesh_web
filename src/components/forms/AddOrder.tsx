@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { createOrder, getOrders } from "@/store/slices/orderSlice";
+import { createOrder, getGlobalOrders } from "@/store/slices/orderSlice";
 import {
   getCustomerDetail
 } from "@/store/slices/customerSlice";
@@ -108,9 +108,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       await dispatch(createOrder(payload)).unwrap();
       setOpen(false);
       resetForm();
-      await dispatch(getOrders({ customer: id, limit: 10, sortBy: "createdAt:desc" })).unwrap();
+      await dispatch(getGlobalOrders({ customer: id })).unwrap();
       dispatch(getCustomerDetail(`${id}`)).unwrap();
-      
       toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());
@@ -189,7 +188,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                   <SelectGroup>
                     {
                     !Array.isArray(data) ? (
-                        <SelectItem value={data?.id}>
+                        <SelectItem value={data?._id}>
                           {data?.firstName + " " + data?.lastName}
                         </SelectItem>
                       ) : (

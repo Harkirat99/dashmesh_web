@@ -6,7 +6,7 @@ import { Plus, Search } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/index";
-import { getTransactions } from "@/store/slices/transactionSlice";
+import { getGlobalTransactions } from "@/store/slices/transactionSlice";
 import TransactionTable from "@/components/modules/TransactionTable";
 import { AddTransaction } from "@/components/forms/AddTransaction";
 import { getCustomers } from "@/store/slices/customerSlice";
@@ -17,9 +17,8 @@ const Transactions = () => {
   const [search, setSearch] = useState("");
   const { data, loading} = useSelector((state: RootState) => state.transaction);
 
-
   useEffect(() => {
-    dispatch(getTransactions({limit: 100000, search, sortBy: "createdAt:desc"}));
+    dispatch(getGlobalTransactions({search}));
   }, [search]);
 
   useEffect(() => {
