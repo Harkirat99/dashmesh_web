@@ -84,7 +84,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
       await dispatch(createTransaction(payload)).unwrap();
       setOpen(false);
       form.reset();
-      await dispatch(getTransactions({ customer: id, limit: 10 })).unwrap();
+      await dispatch(getTransactions({ customer: id, limit: 10, sortBy: "createdAt:desc" })).unwrap();
       dispatch(getCustomerDetail(`${id}`)).unwrap();
       toast("Created successfully");
     } catch (err) {
@@ -93,7 +93,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
   };
 
   const manageDefaultCustomer = () => {
-    if (typeof data == "object") {
+    if (!Array.isArray(data)) {
       setDefaultCustomer(data?._id);
     }
   };
@@ -118,27 +118,28 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
             <div className="grid gap-2">
               <Label htmlFor="text">Customer *</Label>
               <Select
-                disabled={typeof data == "object"}
+                disabled={!Array.isArray(data)}
                 value={defaultCustomer}
+                onValueChange={(value) => setDefaultCustomer(value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a Customer" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {data &&
-                      typeof data != "string" &&
-                      (typeof data == "object" ? (
-                        <SelectItem value={data?._id}>
+                  {
+                    !Array.isArray(data) ? (
+                        <SelectItem value={data?.id}>
                           {data?.firstName + " " + data?.lastName}
                         </SelectItem>
                       ) : (
-                        data.map((item: any) => (
-                          <SelectItem value={item?._id}>
+                         data?.map((item: any) => (
+                          <SelectItem value={item?.id}>
                             {item?.firstName + " " + item?.lastName}
                           </SelectItem>
                         ))
-                      ))}
+                      )
+                    }
                   </SelectGroup>
                 </SelectContent>
               </Select>

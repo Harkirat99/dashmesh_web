@@ -41,8 +41,8 @@ const CustomerDashboard = () => {
 
   useEffect(() => {
     dispatch(getCustomerDetail(`${id}`));
-    dispatch(getOrders({customer: id, limit: 10}));
-    dispatch(getTransactions({customer: id, limit: 10}));
+    dispatch(getOrders({customer: id, limit: 10, sortBy: "createdAt:desc"}));
+    dispatch(getTransactions({customer: id, limit: 10, sortBy: "createdAt:desc"}));
   }, []);
 
   return (

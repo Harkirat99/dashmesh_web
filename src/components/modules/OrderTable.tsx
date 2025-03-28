@@ -15,6 +15,7 @@ import { format } from "date-fns";
 interface OrdersProps {
   data: [];
   loading: boolean;
+  showCustomers?: boolean
 }
 const OrderTable = ({ data, loading }: OrdersProps) => {
   // const navigate = useNavigate();

@@ -108,7 +108,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       await dispatch(createOrder(payload)).unwrap();
       setOpen(false);
       resetForm();
-      await dispatch(getOrders({ customer: id, limit: 10 })).unwrap();
+      await dispatch(getOrders({ customer: id, limit: 10, sortBy: "createdAt:desc" })).unwrap();
       dispatch(getCustomerDetail(`${id}`)).unwrap();
       
       toast("Created successfully");
@@ -158,8 +158,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       manageDefaultCustomer();
     }
   }, [open]);
-  console.log("typeof data", data)
-  console.log("typeof data", typeof data)
+ 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[50%]">
@@ -188,13 +187,14 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {!Array.isArray(data) ? (
+                    {
+                    !Array.isArray(data) ? (
                         <SelectItem value={data?.id}>
                           {data?.firstName + " " + data?.lastName}
                         </SelectItem>
                       ) : (
                          data?.map((item: any) => (
-                          <SelectItem value={item?._id}>
+                          <SelectItem value={item?.id}>
                             {item?.firstName + " " + item?.lastName}
                           </SelectItem>
                         ))
