@@ -35,6 +35,9 @@ const TransactionTable = ({
             <TableHeader>
               <TableRow>
                 <TableHead>Sr No</TableHead>
+                {(data as any)?.[0]?.customer?.firstName && (
+                  <TableHead>Customer</TableHead>
+                )}
                 <TableHead>Amount</TableHead>
                 <TableHead>Payment Type</TableHead>
                 <TableHead>Date</TableHead>
@@ -63,6 +66,9 @@ const TransactionTable = ({
                       <TableCell className="font-medium">
                         {index + 1}
                       </TableCell>
+                      {item?.customer?.firstName && (
+                        <TableCell className="font-medium">{item?.customer?.firstName + " " + item?.customer?.lastName}</TableCell>
+                      )}
                       <TableCell>{item?.amount}</TableCell>
                       <TableCell>{item?.paymentType}</TableCell>
                       <TableCell>{format(item?.date, "PPP")}</TableCell>

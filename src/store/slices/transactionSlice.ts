@@ -23,6 +23,19 @@ export const getTransactions = createAsyncThunk<any , any, { rejectValue: string
 );
 
 
+export const getGlobalTransactions = createAsyncThunk<any , any, { rejectValue: string }>(
+  'order/getGlobalTransactions',
+  async (params : any, { rejectWithValue }) => {
+    try {
+      const response = await api.get<any>('transaction/global', {params});
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
+
 export const createTransaction = createAsyncThunk<any , Transaction, { rejectValue: string }>(
   'customer/createTransaction',
   async (payload, { rejectWithValue }) => {
@@ -59,6 +72,13 @@ const transactionSlice: any = createSlice({
         state.data = action.payload.results;
       })
       .addCase(getTransactions.rejected, handleRejected)
+      // Global transactions
+      .addCase(getGlobalTransactions.pending, handlePending)
+      .addCase(getGlobalTransactions.fulfilled, (state, action) => {
+        handleFulfilled(state);
+        state.data = action.payload;
+      })
+      .addCase(getGlobalTransactions.rejected, handleRejected)
        // Transaction Create
       .addCase(createTransaction.pending, handlePending)
       .addCase(createTransaction.fulfilled, handleFulfilled)

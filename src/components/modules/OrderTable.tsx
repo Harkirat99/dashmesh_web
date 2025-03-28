@@ -30,6 +30,9 @@ const OrderTable = ({ data, loading }: OrdersProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              {(data as any)?.[0]?.customer?.firstName && (
+                  <TableHead>Customer</TableHead>
+              )}
               <TableHead>Quantity</TableHead>
               <TableHead>Base Price</TableHead>
               <TableHead>Actual Price</TableHead>
@@ -59,9 +62,11 @@ const OrderTable = ({ data, loading }: OrdersProps) => {
                 data?.map((item: any) => (
                   <TableRow
                     key={item?.id}
-                    // onClick={() => navigate(`${item?.id}`)}
                   >
                     <TableCell className="font-medium">{item?.name}</TableCell>
+                    {item?.customer?.firstName && (
+                      <TableCell className="font-medium">{item?.customer?.firstName + " " + item?.customer?.lastName}</TableCell>
+                    )}
                     <TableCell>{`${item?.quantity} X ${item?.unitAmount} ${item?.unit}`}</TableCell>
                     <TableCell>{item?.basePrice}</TableCell>
                     <TableCell>{item?.actualPrice}</TableCell>
