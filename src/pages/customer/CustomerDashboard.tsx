@@ -41,8 +41,8 @@ const CustomerDashboard = () => {
 
   useEffect(() => {
     dispatch(getCustomerDetail(`${id}`));
-    dispatch(getOrders({customer: id, limit: 10}));
-    dispatch(getTransactions({customer: id, limit: 10}));
+    dispatch(getOrders({customer: id, limit: 10, sortBy: "createdAt:desc"}));
+    dispatch(getTransactions({customer: id, limit: 10, sortBy: "createdAt:desc"}));
   }, []);
 
   return (
@@ -53,23 +53,25 @@ const CustomerDashboard = () => {
           <div className="flex items-center justify-between space-y-2">
             <div className="space-y-1">
               <h2 className="text-3xl font-bold tracking-tight">
-                Arun Kumar S/O Surinder Kumar
+                {data?.firstName + " " + data?.lastName} {data?.fatherName ? `S/O ${data?.fatherName}` : ""} 
               </h2>
-              
             </div>
             <div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />
-              <p className="tracking-tight">New Jhinda, Assandh, Karnal</p>
+              <p className="tracking-tight">{data?.address}</p>
             </div>
             <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                <p className="tracking-tight">+91 8307213553</p>
+                <p className="tracking-tight">+91 {data?.number}</p>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                <p className="tracking-tight">+91 7988118005</p>
-              </div>
+              {data?.alternateNumber && (
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  <p className="tracking-tight">+91 {data?.alternateNumber}</p>
+                </div>
+              )}
+              
               
             </div>
            
@@ -90,6 +92,15 @@ const CustomerDashboard = () => {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">₹{data?.paidAmount}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Due</CardTitle>
               <IndianRupeeIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -97,15 +108,6 @@ const CustomerDashboard = () => {
               <div className="text-2xl font-bold">
                 ₹{data?.totalAmount - data?.paidAmount}
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">₹{data?.paidAmount}</div>
             </CardContent>
           </Card>
         </div>

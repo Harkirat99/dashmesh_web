@@ -4,7 +4,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -14,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
 interface TransactionProps {
   data: [],
@@ -23,7 +23,7 @@ const TransactionTable = ({
   data,
   loading
 }: TransactionProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
       <Card className="gap-0">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -59,13 +59,13 @@ const TransactionTable = ({
                     </TableRow>
                   ))
                 : Array.isArray(data) && data?.map((item: any, index) => (
-                    <TableRow key={item?.id} onClick={() => navigate(`${item?.id}`)}>
+                    <TableRow key={item?.id} >
                       <TableCell className="font-medium">
                         {index + 1}
                       </TableCell>
                       <TableCell>{item?.amount}</TableCell>
                       <TableCell>{item?.paymentType}</TableCell>
-                      <TableCell>{item?.date}</TableCell>
+                      <TableCell>{format(item?.date, "PPP")}</TableCell>
                     </TableRow>
                   ))}
             </TableBody>

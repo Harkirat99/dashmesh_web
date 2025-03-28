@@ -28,7 +28,7 @@ const navigationItems = [
   {
     title: "Dashboard",
     icon: LayoutDashboard,
-    href: "/dasboard",
+    href: "/dashboard",
   },
   {
     title: "Customers",
@@ -36,9 +36,9 @@ const navigationItems = [
     href: "/customers",
   },
   {
-    title: "Products",
+    title: "Orders",
     icon: Package,
-    href: "/products",
+    href: "/orders",
   },
   {
     title: "Transactions",

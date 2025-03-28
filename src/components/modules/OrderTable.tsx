@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -10,13 +10,15 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
 interface OrdersProps {
   data: [];
   loading: boolean;
+  showCustomers?: boolean
 }
 const OrderTable = ({ data, loading }: OrdersProps) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     <Card className="gap-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -57,13 +59,13 @@ const OrderTable = ({ data, loading }: OrdersProps) => {
                 data?.map((item: any) => (
                   <TableRow
                     key={item?.id}
-                    onClick={() => navigate(`${item?.id}`)}
+                    // onClick={() => navigate(`${item?.id}`)}
                   >
                     <TableCell className="font-medium">{item?.name}</TableCell>
                     <TableCell>{`${item?.quantity} X ${item?.unitAmount} ${item?.unit}`}</TableCell>
                     <TableCell>{item?.basePrice}</TableCell>
                     <TableCell>{item?.actualPrice}</TableCell>
-                    <TableCell>{item?.date}</TableCell>
+                    <TableCell>{format(item?.date, "PPP")}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm">
                         Invoice

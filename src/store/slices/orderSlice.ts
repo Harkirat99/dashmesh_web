@@ -22,6 +22,18 @@ export const getOrders = createAsyncThunk<any , any, { rejectValue: string }>(
   }
 );
 
+export const getGlobalOrders = createAsyncThunk<any , any, { rejectValue: string }>(
+  'order/getGlobalOrders',
+  async (params : any, { rejectWithValue }) => {
+    try {
+      const response = await api.get<any>('order/global', {params});
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
 export const createOrder = createAsyncThunk<any , Order, { rejectValue: string }>(
   'customer/createOrder',
   async (payload, { rejectWithValue }) => {
@@ -51,6 +63,13 @@ const orderSlice: any = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getOrders.pending, handlePending)
+      .addCase(getOrders.fulfilled, (state, action) => {
+        handleFulfilled(state);
+        state.data = action.payload.results;
+      })
+      .addCase(getOrders.rejected, handleRejected)
+      // 
       .addCase(getOrders.pending, handlePending)
       .addCase(getOrders.fulfilled, (state, action) => {
         handleFulfilled(state);
