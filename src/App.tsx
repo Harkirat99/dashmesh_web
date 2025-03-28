@@ -9,7 +9,6 @@ import NotFound from "@/pages/NotFound"
 import Login from "@/pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute";
 import Orders from "@/pages/order/Orders";
-
 function App() {
   return (
     <BrowserRouter>
