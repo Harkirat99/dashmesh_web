@@ -19,7 +19,6 @@ import {  useParams } from "react-router-dom";
 import { getCustomerDetail } from "@/store/slices/customerSlice";
 import { getOrders } from "@/store/slices/orderSlice";
 import { getTransactions } from "@/store/slices/transactionSlice";
-
 import { AppDispatch, RootState } from "../../store/index";
 import TransactionTable from "@/components/modules/TransactionTable";
 import OrderTable from "@/components/modules/OrderTable";
@@ -122,7 +121,7 @@ const CustomerDashboard = () => {
               Add Transaction
           </Button>
         </div>
-        <TransactionTable data={transactions} loading={transactionLoading} />
+        <TransactionTable data={transactions} loading={transactionLoading} customer={id} />
         <div className="flex items-center justify-between">
           <h4 className="text-2xl font-bold tracking-tight">
             Recent Orders
@@ -132,7 +131,7 @@ const CustomerDashboard = () => {
               Add Order
           </Button>
         </div>
-        <OrderTable data={orders} loading={ordersLoading}/>
+        <OrderTable data={orders} loading={ordersLoading} customer={id}/>
       </div>
      <AddOrder open={addOrder} setOpen={setAddOrder} type="add" />
      <AddTransaction open={addTransaction} setOpen={setAddTransaction} type="add" />
