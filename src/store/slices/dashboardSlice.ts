@@ -22,9 +22,22 @@ export const getStats = createAsyncThunk<any , any, { rejectValue: string }>(
   }
 );
 
+export const getOrdersChart = createAsyncThunk<any , any, { rejectValue: string }>(
+  'dashboard/getOrdersChart',
+  async (params : any, { rejectWithValue }) => {
+    try {
+      const response = await api.get<any>('dashboard/orders', {params});
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
 const initialState: any = {
   data: null,
   stats: null,
+  ordersAreaChart: null,
   loading: false,
   error: null,
   reducer: null
@@ -46,6 +59,13 @@ const dashboardSlice: any = createSlice({
         state.stats = action.payload;
        })
       .addCase(getStats.rejected, handleRejected)
+       // Orders Area Chart
+      .addCase(getOrdersChart.pending, handlePending)
+      .addCase(getOrdersChart.fulfilled, (state, action) => {
+        handleFulfilled(state);
+        state.ordersAreaChart = action.payload;
+       })
+      .addCase(getOrdersChart.rejected, handleRejected)
    
   },
 })as Slice<DashboardState, typeof dashboardSlice.reducers, 'dashboard'> & { reducer: any };;

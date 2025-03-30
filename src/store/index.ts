@@ -6,6 +6,7 @@ import customerReducer from './slices/customerSlice';
 import orderReducer from './slices/orderSlice';
 import transactionReducer from './slices/transactionSlice';
 import dashboardSlice from './slices/dashboardSlice';
+import seasonSlice from './slices/seasonSlice';
 
 
 type RootState = ReturnType<typeof store.getState>;
@@ -26,6 +27,7 @@ export const store: any = configureStore({
     order: orderReducer,
     transaction: transactionReducer,
     dashboard: dashboardSlice,
+    season: seasonSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

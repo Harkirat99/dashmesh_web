@@ -20,3 +20,9 @@ export interface Transaction {
     paymentType: string,
     amount: number
 }
+
+export interface Season {
+    startDate: Date,
+    endDate: Date,
+    name: string
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -18,20 +18,56 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
-const DateSelector = () => {
+const DateSelector = ({ data, handleDateChanged }: any) => {
+
   const form = useForm({
     defaultValues: {
       startDate: "",
       endDate: "",
     },
   });
+  const [selectedRange, setSelectedRange] = useState("All Time");
+  const handleSelectChange = (value: any) => {
+    setSelectedRange(value);
+    const selectedOption = data.find((item: any) => item.name === value);
+    if (selectedOption) {
+      form.setValue("startDate", selectedOption.startDate);
+      form.setValue("endDate", selectedOption.endDate);
+      handleDateChanged({start:  selectedOption.startDate, end: selectedOption.endDate})
+    }
+  };
+
   return (
     <Form {...form}>
-      <form
-        className={cn("grid items-start gap-4 flex")}
-        //   onSubmit={handleSubmit}
-      >
+      <form className={cn("grid items-start gap-4 flex")}>
+        <div className="grid gap-2">
+          <Label htmlFor="text">Season</Label>
+          <Select value={selectedRange} onValueChange={handleSelectChange}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a season" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {data?.map((item: any, index: number) => (
+                  <SelectItem value={item?.name} key={index}>
+                    {item?.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
         <FormField
           control={form.control}
           name="startDate"
@@ -76,7 +112,7 @@ const DateSelector = () => {
           name="endDate"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Transaction date</FormLabel>
+              <FormLabel>End date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
