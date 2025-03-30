@@ -4,7 +4,7 @@ import Layout from "@/components/Layout"
 import Dashboard from "@/pages/Dashboard"
 import Customers from "@/pages/customer/Customers"
 import CustomerDashboard from "@/pages/customer/CustomerDashboard"
-import Transactions from "@/pages/transaction/Transactions"
+import Transactions from "@/pages/transaction/Transactions";
 import NotFound from "@/pages/NotFound";
 import Login from "@/pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
