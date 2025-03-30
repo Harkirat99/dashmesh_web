@@ -9,7 +9,7 @@ import NotFound from "@/pages/NotFound"
 import Login from "@/pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute";
 import Orders from "@/pages/order/Orders";
-import Seasons from "./pages/season/Seasons"
+import Seasons from "./pages/season/Seasons";
 
 function App() {
   return (
