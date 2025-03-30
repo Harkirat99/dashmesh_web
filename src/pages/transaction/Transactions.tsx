@@ -10,15 +10,27 @@ import { getGlobalTransactions } from "@/store/slices/transactionSlice";
 import TransactionTable from "@/components/modules/TransactionTable";
 import { AddTransaction } from "@/components/forms/AddTransaction";
 import { getCustomers } from "@/store/slices/customerSlice";
+import { useSearchParams } from "react-router-dom";
 
 const Transactions = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { data, loading} = useSelector((state: RootState) => state.transaction);
+  const [searchParams] = useSearchParams();
+  const customer = searchParams.get("customer") || "";
 
   useEffect(() => {
-    dispatch(getGlobalTransactions({search}));
+    let conditionObj: { [key: string]: any } = {
+      search,
+    };
+    if (customer) {
+      conditionObj = {
+        ...conditionObj,
+        customer: customer,
+      };
+    }
+    dispatch(getGlobalTransactions(conditionObj));
   }, [search]);
 
   useEffect(() => {
@@ -45,7 +57,7 @@ const Transactions = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <TransactionTable data={data} loading={loading}/>
+            <TransactionTable data={data} loading={loading} customer={customer} />
           </CardContent>
         </Card>
         <AddTransaction open={open} type="global" setOpen={setOpen}/>

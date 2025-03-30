@@ -14,7 +14,7 @@ import { Plus, Search } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomers } from "@/store/slices/customerSlice";
-import { AppDispatch, RootState } from "../../store/index";
+import { AppDispatch, RootState } from "@/store/index";
 import { CustomerForm } from "@/components/forms/CustomerForm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";

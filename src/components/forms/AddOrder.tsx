@@ -58,8 +58,8 @@ interface Item {
   productName: string;
   unitAmount: number;
   unit: string;
-  actualPrice: string;
-  basePrice: string;
+  // actualPrice: string;
+  price: string;
 }
 
 export function AddOrder({ open, type, setOpen }: FormProps) {
@@ -82,8 +82,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       productName: "",
       unitAmount: 1,
       unit: "kg",
-      actualPrice: "",
-      basePrice: "",
+      // actualPrice: "",
+      price: "",
     },
   });
 
@@ -95,8 +95,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
           quantity: item?.quantity,
           unit: item?.unit,
           unitAmount: item?.unitAmount,
-          actualPrice: item?.actualPrice.slice(1),
-          basePrice: item?.basePrice.slice(1),
+          // actualPrice: item?.actualPrice.slice(1),
+          price: item?.price.slice(1).replace(/,/g, ""),
         };
       });
 
@@ -193,7 +193,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                         </SelectItem>
                       ) : (
                          data?.map((item: any) => (
-                          <SelectItem value={item?.id}>
+                          <SelectItem value={item?.id} key={item?.id}>
                             {item?.firstName + " " + item?.lastName}
                           </SelectItem>
                         ))
@@ -254,13 +254,13 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                         </p>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Base Price:</span>
-                        <span className="font-medium">{item?.basePrice}</span>
+                        <span className="text-gray-400">Price:</span>
+                        <span className="font-medium">{formatPrice(item?.price)}</span>
                       </div>
-                      <div className="flex justify-between">
+                      {/* <div className="flex justify-between">
                         <span className="text-gray-400">Actual Price:</span>
                         <span className="font-medium">{item?.actualPrice}</span>
-                      </div>
+                      </div> */}
                     </CardContent>
                   </Card>
                 ))}
@@ -396,10 +396,10 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
               />
               <FormField
                 control={itemForm.control}
-                name="basePrice"
+                name="price"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Base Price</FormLabel>
+                    <FormLabel>Price</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="₹0.00"
@@ -418,7 +418,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
               />
 
               {/* Actual Price Field */}
-              <FormField
+              {/* <FormField
                 control={itemForm.control}
                 name="actualPrice"
                 render={({ field }) => (
@@ -439,7 +439,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <div className="col-span-2 flex justify-end gap-2.5">
                 <Button
                   variant="outline"

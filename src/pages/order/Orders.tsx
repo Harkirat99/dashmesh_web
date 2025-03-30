@@ -10,21 +10,32 @@ import OrderTable from "@/components/modules/OrderTable";
 import { getGlobalOrders } from "@/store/slices/orderSlice";
 import { AddOrder } from "@/components/forms/AddOrder";
 import { getCustomers } from "@/store/slices/customerSlice";
+import { useSearchParams } from "react-router-dom";
 
 const Orders = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const { data, loading} = useSelector((state: RootState) => state.order);
-
+  const { data, loading } = useSelector((state: RootState) => state.order);
+  const [searchParams] = useSearchParams();
+  const customer = searchParams.get("customer") || "";
 
   useEffect(() => {
-    dispatch(getGlobalOrders({search}));
+    let conditionObj: { [key: string]: any } = {
+      search,
+    };
+    if (customer) {
+      conditionObj = {
+        ...conditionObj,
+        customer: customer,
+      };
+    }
+    dispatch(getGlobalOrders(conditionObj));
   }, [search]);
 
   useEffect(() => {
     dispatch(getCustomers({}));
-  }, [])
+  }, []);
 
   return (
     <>
@@ -42,14 +53,19 @@ const Orders = () => {
             <CardTitle>Orders Management</CardTitle>
             <div className="relative w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search order..." className="pl-8" value={search} onChange={(e) => setSearch(e.target.value)}/>
+              <Input
+                placeholder="Search order..."
+                className="pl-8"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
           </CardHeader>
           <CardContent>
-            <OrderTable data={data} loading={loading}  showCustomers={true}/>
+            <OrderTable data={data} loading={loading} showCustomers={true} customer={customer}/>
           </CardContent>
         </Card>
-        <AddOrder open={open} type="global" setOpen={setOpen}/>
+        <AddOrder open={open} type="global" setOpen={setOpen} />
       </div>
     </>
   );

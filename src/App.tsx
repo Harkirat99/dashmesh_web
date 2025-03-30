@@ -9,6 +9,8 @@ import NotFound from "@/pages/NotFound"
 import Login from "@/pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute";
 import Orders from "@/pages/order/Orders";
+import Seasons from "./pages/season/Seasons"
+
 function App() {
   return (
     <BrowserRouter>
@@ -25,6 +27,7 @@ function App() {
             <Route path="customers/:id" element={<CustomerDashboard />} />
             <Route path="orders" element={<Orders />} />
             <Route path="transactions" element={<Transactions />} />
+            <Route path="seasons" element={<Seasons />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
