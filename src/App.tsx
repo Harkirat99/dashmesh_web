@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { ThemeProvider } from "@/components/theme-provider"
 import Layout from "@/components/Layout"
 import Dashboard from "@/pages/Dashboard"
-import Customers from "@/pages/customer/Customers"
+import Customers from "@/pages/customer/Customers";
 import CustomerDashboard from "@/pages/customer/CustomerDashboard";
 import Transactions from "@/pages/transaction/Transactions";
 import NotFound from "@/pages/NotFound";
