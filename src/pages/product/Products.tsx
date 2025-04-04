@@ -6,31 +6,32 @@ import { Plus, Search } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/index";
-import { getSuppliers } from "@/store/slices/supplierSlice";
 import SupplierTable from "@/components/modules/SupplierTable";
+import { getProducts } from "@/store/slices/productSlice";
+import ProductTable from "@/components/modules/ProductTable";
 // import { AddProduct } from "@/components/forms/AddStock";
 
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const { data, loading} = useSelector((state: RootState) => state.supplier);
+  const { data, loading} = useSelector((state: RootState) => state.product);
 
   useEffect(() => {
-    dispatch(getSuppliers({limit: 100000, sortBy: "createdAt:desc", search}));
+    dispatch(getProducts({limit: 100000, sortBy: "createdAt:desc", search}));
   }, [search]);
 
 
   return (
     <>
-      <Header title="Customers" />
+      <Header title="Products" />
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight">Products</h2>
-          <Button onClick={() => setOpen(!open)}>
+          {/* <Button onClick={() => setOpen(!open)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Product
-          </Button>
+          </Button> */}
         </div>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -41,7 +42,7 @@ const Products = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <SupplierTable data={data} loading={loading} />
+            <ProductTable data={data} loading={loading} />
           </CardContent>
         </Card>
         {/* <AddProduct open={open} type="global" setOpen={setOpen}/> */}
