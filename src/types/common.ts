@@ -35,3 +35,12 @@ export interface Supplier {
     account?: string,
     ifsc?: any,
 }
+
+
+export interface Stock {
+    supplier: string,
+    date: string,
+    taxAmount: string,
+    additionalCharges: string,
+    products: any
+}

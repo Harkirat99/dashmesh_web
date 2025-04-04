@@ -22,18 +22,18 @@ import { AppDispatch, RootState } from "../../store/index";
 import TransactionTable from "@/components/modules/TransactionTable";
 import { Button } from "@/components/ui/button";
 import { AddStock } from "@/components/forms/AddStock";
+import { getStocks } from "@/store/slices/stockSlice";
+import StockTable from "@/components/modules/StockTable";
 
 
 const SupplierDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams();
-  const { data: transactions, loading: transactionLoading } = useSelector((state: RootState) => state.transaction);
+  const { data, loading } = useSelector((state: RootState) => state.stock);
   const [addStock, setAddStock] = useState(false);
 
-
   useEffect(() => {
-    dispatch(getCustomerDetail(`${id}`));
-    dispatch(getTransactions({customer: id, limit: 10, sortBy: "createdAt:desc"}));
+    dispatch(getStocks({supplier: id, limit: 100000}));
   }, []);
 
   return (
@@ -105,7 +105,7 @@ const SupplierDashboard = () => {
               Add New Stock
           </Button>
         </div>
-        <TransactionTable data={transactions} loading={transactionLoading} customer={id} />
+        <StockTable data={data} loading={loading} />
       </div>
      <AddStock open={addStock} setOpen={setAddStock} type="add" />
     </>

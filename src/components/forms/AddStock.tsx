@@ -44,6 +44,8 @@ import { RootState } from "@/store/index";
 import { useParams } from "react-router-dom";
 import { formatPrice, deFormatPrice } from "@/lib/converter";
 import { getSuppliers } from "@/store/slices/supplierSlice";
+import { createStock, getStocks } from "@/store/slices/stockSlice";
+
 interface FormProps {
   open: boolean;
   type: string;
@@ -111,11 +113,10 @@ export function AddStock({ open, type, setOpen }: FormProps) {
       };
 
       console.log("payload", payload);
-      // await dispatch(createOrder(payload)).unwrap();
-      // setOpen(false);
-      // resetForm();
-      // await dispatch(getGlobalOrders({ customer: id })).unwrap();
-      // dispatch(getCustomerDetail(`${id}`)).unwrap();
+      await dispatch(createStock(payload)).unwrap();
+      setOpen(false);
+      resetForm();
+      await dispatch(getStocks({ supplier: id })).unwrap();
       toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());
@@ -169,7 +170,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
 
   const golbalGrandTotal = () => {
     const totalOrderValue = globalTotalAmount();
-    return totalOrderValue + deFormatPrice(additionalChargesWatcher) + deFormatPrice(taxAmountWatcher)
+    return totalOrderValue + parseInt(deFormatPrice(additionalChargesWatcher)) + parseInt(deFormatPrice(taxAmountWatcher))
   }
 
   useEffect(() => {
