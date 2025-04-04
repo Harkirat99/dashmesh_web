@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { BarChart3, LayoutDashboard, Package, ShoppingCart, Users, CalendarPlus } from "lucide-react";
+import { BarChart3, LayoutDashboard, Package, ShoppingCart, Users, CalendarPlus, ShoppingBasket } from "lucide-react";
 
 import {
   Sidebar,
@@ -49,6 +49,11 @@ const navigationItems = [
     title: "Seasons",
     icon: CalendarPlus,
     href: "/seasons",
+  },
+  {
+    title: "Supplier",
+    icon: ShoppingBasket,
+    href: "/suppliers",
   },
   {
     title: "Analytics",

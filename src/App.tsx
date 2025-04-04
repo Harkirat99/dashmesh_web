@@ -10,6 +10,7 @@ import Login from "@/pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Orders from "@/pages/order/Orders";
 import Seasons from "./pages/season/Seasons";
+import Suppliers from "./pages/suppliers/Suppliers";
 
 function App() {
   return (
@@ -22,12 +23,14 @@ function App() {
                 <Layout />
               </ProtectedRoute>
             }>
+               <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="customers" element={<Customers />} />
             <Route path="customers/:id" element={<CustomerDashboard />} />
             <Route path="orders" element={<Orders />} />
             <Route path="transactions" element={<Transactions />} />
             <Route path="seasons" element={<Seasons />} />
+            <Route path="suppliers" element={<Suppliers />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

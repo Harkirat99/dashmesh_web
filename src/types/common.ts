@@ -26,3 +26,12 @@ export interface Season {
     endDate: Date,
     name: string
 }
+
+
+export interface Supplier {
+    name?: string,
+    address?: string,
+    number?: any,
+    account?: string,
+    ifsc?: any,
+}
