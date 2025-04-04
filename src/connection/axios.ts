@@ -9,7 +9,7 @@ interface AuthResponse {
     }
 }
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: "https://dashmeshtreding.shop/api/v1",
   timeout: 10000,
 });
 
