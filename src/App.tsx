@@ -10,7 +10,9 @@ import Login from "@/pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Orders from "@/pages/order/Orders";
 import Seasons from "./pages/season/Seasons";
-import Suppliers from "./pages/suppliers/Suppliers";
+import Suppliers from "./pages/supplier/Suppliers";
+import Products from "./pages/product/Products";
+import SupplierDashboard from "./pages/supplier/SupplierDashboard";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
             <Route path="transactions" element={<Transactions />} />
             <Route path="seasons" element={<Seasons />} />
             <Route path="suppliers" element={<Suppliers />} />
+            <Route path="suppliers/:id" element={<SupplierDashboard />} />
+            <Route path="products" element={<Products />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

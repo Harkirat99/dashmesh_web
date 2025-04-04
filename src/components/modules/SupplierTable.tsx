@@ -8,14 +8,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface TransactionProps {
   data: [];
   loading: boolean;
 }
 const SupplierTable = ({ data, loading }: TransactionProps) => {
-  return (
+    const navigate = useNavigate();
+  
+    return (
     <Card className="gap-0">
       <CardContent>
         <Table>
@@ -49,7 +51,7 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
                 ))
               : Array.isArray(data) &&
                 data?.map((item: any, index) => (
-                  <TableRow key={item?.id}>
+                  <TableRow key={item?.id} className="cursor-pointer" onClick={() => navigate(`/suppliers/${item?.id}`)}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell>{item?.name}</TableCell>
                     <TableCell>{item?.address}</TableCell>

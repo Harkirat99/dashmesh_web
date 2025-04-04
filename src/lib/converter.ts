@@ -1,4 +1,4 @@
-export const formatPrice = (value: string) => {
+export const formatPrice = (value: any) => {
     // Remove all non-numeric characters except decimal point
     if(value){
       const numericValue = value?.toString()?.replace(/[^0-9.]/g, "");
@@ -15,5 +15,12 @@ export const formatPrice = (value: string) => {
     }else{
       return 0
     }
-    
+  };
+
+  export const deFormatPrice = (value: any) => {
+    if(value){
+      return value.slice(1).replace(/,/g, "");
+    }else{
+      return 0
+    }
   };
