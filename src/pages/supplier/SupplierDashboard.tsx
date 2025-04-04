@@ -17,13 +17,10 @@ import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import {  useParams } from "react-router-dom";
 import { getCustomerDetail } from "@/store/slices/customerSlice";
-import { getOrders } from "@/store/slices/orderSlice";
 import { getTransactions } from "@/store/slices/transactionSlice";
 import { AppDispatch, RootState } from "../../store/index";
 import TransactionTable from "@/components/modules/TransactionTable";
 import { Button } from "@/components/ui/button";
-import { AddOrder } from "@/components/forms/AddOrder";
-import { AddTransaction } from "@/components/forms/AddTransaction";
 import { AddStock } from "@/components/forms/AddStock";
 
 

@@ -13,8 +13,6 @@ import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { createOrder, getGlobalOrders } from "@/store/slices/orderSlice";
-import { getCustomerDetail } from "@/store/slices/customerSlice";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import {
