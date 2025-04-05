@@ -30,7 +30,7 @@ const SupplierDashboard = () => {
   const [addStock, setAddStock] = useState(false);
 
   useEffect(() => {
-    dispatch(getStocks({supplier: id, limit: 100000}));
+    dispatch(getStocks({supplier: id, limit: 100000, sortBy: "createdAt:desc"}));
   }, []);
 
   return (

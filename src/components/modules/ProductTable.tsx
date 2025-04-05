@@ -27,7 +27,7 @@ const ProductTable = ({ data, loading }: TransactionProps) => {
               <TableHead>Price per-peice</TableHead>
               <TableHead>Size</TableHead>
               <TableHead>Quantity</TableHead>
-              <TableHead>Pending Quantity</TableHead>
+              <TableHead>Left Quantity</TableHead>
               <TableHead>Salt</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Expiry</TableHead>
@@ -56,13 +56,26 @@ const ProductTable = ({ data, loading }: TransactionProps) => {
                   <TableRow key={item?.id}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
                     <TableCell>{item?.name}</TableCell>
-                    <TableCell>{item?.supplier}</TableCell>
+                    <TableCell>{item?.supplier?.name}</TableCell>
                     <TableCell>{item?.price}</TableCell>
-                    <TableCell>{item?.size } X {item?.unit}</TableCell>
+                    <TableCell>
+                      {item?.size} X {item?.unit}
+                    </TableCell>
                     <TableCell>{item?.quantity}</TableCell>
                     <TableCell>{item?.leftQuantity}</TableCell>
                     <TableCell>{item?.salt}</TableCell>
-                    <TableCell>{item?.status}</TableCell>
+                    <TableCell>
+                      {" "}
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          item?.leftQuantity > 0
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                        }`}
+                      >
+                        {item?.leftQuantity > 0 ? "In-stock" : "Sold Out"}
+                      </span>
+                    </TableCell>
                     <TableCell>{format(item?.expiry, "PPP")}</TableCell>
                   </TableRow>
                 ))}
