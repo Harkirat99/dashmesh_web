@@ -12,6 +12,7 @@ import {
   Phone,
   MapPin,
   Plus,
+  Landmark
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,16 +22,21 @@ import { Button } from "@/components/ui/button";
 import { AddStock } from "@/components/forms/AddStock";
 import { getStocks } from "@/store/slices/stockSlice";
 import StockTable from "@/components/modules/StockTable";
+import { getSupplierDetail } from "@/store/slices/supplierSlice";
+import { formatPrice } from "@/lib/converter";
 
 
 const SupplierDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams();
   const { data, loading } = useSelector((state: RootState) => state.stock);
+  const { detail } = useSelector((state: RootState) => state.supplier);
+
   const [addStock, setAddStock] = useState(false);
 
   useEffect(() => {
     dispatch(getStocks({supplier: id, limit: 100000, sortBy: "createdAt:desc"}));
+    dispatch(getSupplierDetail(`${id}`));
   }, []);
 
   return (
@@ -41,17 +47,22 @@ const SupplierDashboard = () => {
           <div className="flex items-center justify-between space-y-2">
             <div className="space-y-1">
               <h2 className="text-3xl font-bold tracking-tight">
-                {"Buyer"} 
+                {detail?.name} 
               </h2>
+              <div className="flex items-center gap-2">
+              <Landmark className="w-4 h-4" />
+              <p className="tracking-tight">{detail?.account} ({detail?.ifsc})</p>
+            </div>
+            
             </div>
             <div>
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />
-              <p className="tracking-tight">New Jhinda</p>
+              <p className="tracking-tight">{detail?.address}</p>
             </div>
             <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                <p className="tracking-tight">+91 8307213553</p>
+                <p className="tracking-tight">+91 {detail?.number}</p>
               </div>
             </div>
            
@@ -62,31 +73,31 @@ const SupplierDashboard = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Amount
+                Grand Total
               </CardTitle>
               <BarChart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">₹0</div>
+              <div className="text-2xl font-bold">{formatPrice(detail?.totalAmount)}</div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Order</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">₹0</div>
+              <div className="text-2xl font-bold">{formatPrice(detail?.totalOrderValue)}</div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Due</CardTitle>
+              <CardTitle className="text-sm font-medium">Additional Charges</CardTitle>
               <IndianRupeeIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                ₹0
+                {formatPrice(detail?.totalCharges + detail?.totalTax)}
               </div>
             </CardContent>
           </Card>
