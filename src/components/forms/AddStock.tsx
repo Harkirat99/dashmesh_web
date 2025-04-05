@@ -111,8 +111,6 @@ export function AddStock({ open, type, setOpen }: FormProps) {
         additionalCharges: deFormatPrice(form.getValues().additionalCharges),
         products: formattedItems,
       };
-
-      console.log("payload", payload);
       await dispatch(createStock(payload)).unwrap();
       setOpen(false);
       resetForm();

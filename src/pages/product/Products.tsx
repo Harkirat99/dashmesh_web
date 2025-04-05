@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import {  Search } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/index";
-import SupplierTable from "@/components/modules/SupplierTable";
 import { getProducts } from "@/store/slices/productSlice";
 import ProductTable from "@/components/modules/ProductTable";
 // import { AddProduct } from "@/components/forms/AddStock";
 
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { data, loading} = useSelector((state: RootState) => state.product);
 

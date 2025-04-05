@@ -14,9 +14,7 @@ import { Dispatch, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
 import { createOrder, getGlobalOrders } from "@/store/slices/orderSlice";
-import {
-  getCustomerDetail
-} from "@/store/slices/customerSlice";
+import { getCustomerDetail } from "@/store/slices/customerSlice";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import {
@@ -46,7 +44,8 @@ import {
 import { Card, CardContent } from "../ui/card";
 import { RootState } from "@/store/index";
 import { useParams } from "react-router-dom";
-import { formatPrice } from "@/lib/converter";
+import { deFormatPrice, formatPrice } from "@/lib/converter";
+import { getProductsDropdown } from "@/store/slices/productSlice";
 interface FormProps {
   open: boolean;
   type: string;
@@ -55,21 +54,24 @@ interface FormProps {
 
 interface Item {
   quantity: number;
-  productName: string;
-  unitAmount: number;
+  product: string;
+  size: number;
   unit: string;
-  // actualPrice: string;
   price: string;
 }
 
 export function AddOrder({ open, type, setOpen }: FormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { data } = useSelector((state: RootState) => state.customer);
+  const { dropdown } = useSelector((state: RootState) => state.product);
   const { id } = useParams();
   const [items, setItems] = useState<Item[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isNew, setIsNew] = useState(false);
+
   const [defaultCustomer, setDefaultCustomer] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<any>({});
+
   const form = useForm({
     defaultValues: {
       date: "",
@@ -79,11 +81,12 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
   const itemForm = useForm({
     defaultValues: {
       quantity: 1,
-      productName: "",
-      unitAmount: 1,
+      product: "",
+      size: 1,
       unit: "kg",
-      // actualPrice: "",
       price: "",
+      totalPrice: "",
+      orgPrice: "",
     },
   });
 
@@ -91,11 +94,10 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
     try {
       const formattedItems = items.map((item) => {
         return {
-          name: item?.productName,
+          product: item?.product,
           quantity: item?.quantity,
           unit: item?.unit,
-          unitAmount: item?.unitAmount,
-          // actualPrice: item?.actualPrice.slice(1),
+          size: item?.size,
           price: item?.price.slice(1).replace(/,/g, ""),
         };
       });
@@ -139,7 +141,10 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
 
   const handleSaveItems = async () => {
     const existingItems = [...items];
-    existingItems.push(itemForm.getValues());
+    existingItems.push({
+      ...itemForm.getValues(),
+      product: selectedProduct?.id,
+    });
     setItems(existingItems);
     itemForm.reset();
     setQuantity(1);
@@ -151,13 +156,22 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
       setDefaultCustomer(data?._id);
     }
   };
+  const price = itemForm.watch("price");
+  const getTotalPrice = () => {
+    const numericPrice = parseFloat(price?.replace(/[^\d.-]/g, "") || "0");
+    return formatPrice((numericPrice * quantity).toFixed(2));
+  };
+  const golbalGrandTotal = () => {
+    return items.reduce((acc, curr) => acc + (deFormatPrice(curr?.price) * curr?.quantity), 0);
+  }
 
   useEffect(() => {
     if (open) {
       manageDefaultCustomer();
+      dispatch(getProductsDropdown({})).unwrap();
     }
   }, [open]);
- 
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[50%]">
@@ -186,19 +200,17 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {
-                    !Array.isArray(data) ? (
-                        <SelectItem value={data?._id}>
-                          {data?.firstName + " " + data?.lastName}
+                    {!Array.isArray(data) ? (
+                      <SelectItem value={data?._id}>
+                        {data?.firstName + " " + data?.lastName}
+                      </SelectItem>
+                    ) : (
+                      data?.map((item: any) => (
+                        <SelectItem value={item?.id} key={item?.id}>
+                          {item?.firstName + " " + item?.lastName}
                         </SelectItem>
-                      ) : (
-                         data?.map((item: any) => (
-                          <SelectItem value={item?.id} key={item?.id}>
-                            {item?.firstName + " " + item?.lastName}
-                          </SelectItem>
-                        ))
-                      )
-                    }
+                      ))
+                    )}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -243,27 +255,42 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             />
             <div className="col-span-2 w-full">
               <div className="flex flex-col gap-4 w-full">
-                {items.map((item: Item, index: number) => (
-                  <Card className="p-4 shadow-sm rounded-lg w-full" key={index}>
-                    <CardContent className="text-sm">
-                      <div className="flex justify-between">
-                        <p className="font-medium">{item?.productName}</p>
-                        <p className="text-gray-500">
-                          {item?.quantity} × {item?.unitAmount}
-                          {item?.unit}
-                        </p>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Price:</span>
-                        <span className="font-medium">{formatPrice(item?.price)}</span>
-                      </div>
-                      {/* <div className="flex justify-between">
-                        <span className="text-gray-400">Actual Price:</span>
-                        <span className="font-medium">{item?.actualPrice}</span>
-                      </div> */}
-                    </CardContent>
-                  </Card>
-                ))}
+                {items.map((item: Item, index: number) => {
+                  const product = dropdown.find(
+                    (val: any) => val.id === item?.product
+                  );
+
+                  return (
+                    <Card
+                      className="p-4 shadow-sm rounded-lg w-full"
+                      key={index}
+                    >
+                      <CardContent className="text-sm">
+                        <div className="flex justify-between">
+                          <p className="font-medium">
+                            {product?.name || "N/A"}
+                          </p>
+                          <p className="text-gray-500">
+                            {item?.quantity} × {product?.size || "N/A"}{" "}
+                            {product?.unit || "N/A"}
+                          </p>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Per peice Price:</span>
+                          <span className="font-medium">
+                            {formatPrice(item?.price)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Total Price:</span>
+                          <span className="font-medium">
+                            {formatPrice(deFormatPrice(item?.price)* item?.quantity)}
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
               {!isNew && (
                 <div className="flex justify-end mt-4">
@@ -279,7 +306,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
               className="grid grid-cols-2 gap-6"
               onSubmit={itemForm.handleSubmit(handleSaveItems)}
             >
-              <FormField
+              {/* <FormField
                 control={itemForm.control}
                 name="productName"
                 render={({ field }) => (
@@ -297,7 +324,40 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
+              <div className="grid gap-2">
+                <Label htmlFor="text">Product *</Label>
+                <Select
+                  value={selectedProduct?.id}
+                  onValueChange={(value) => {
+                    const selected = dropdown.find(
+                      (item: any) => item.id === value
+                    );
+                    setSelectedProduct(selected);
+                    if (selected) {
+                      itemForm.setValue("size", selected.size);
+                      itemForm.setValue("unit", selected.unit);
+                      itemForm.setValue("orgPrice", selected.price);
+                    }
+                  }}
+                  // disabled={!Array.isArray(data)}
+                  // value={selectedProduct?.id}
+                  // onValueChange={(value) => setDefaultCustomer(value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {dropdown?.map((item: any) => (
+                        <SelectItem value={item?.id} key={item?.id}>
+                          {item?.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
               <FormField
                 control={itemForm.control}
                 name="quantity"
@@ -345,17 +405,18 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
               />
               <FormField
                 control={itemForm.control}
-                name="unitAmount"
+                name="size"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Unit Amount</FormLabel>
+                    <FormLabel>Size</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={true}
                         type="number"
                         min={0}
                         step="0.01"
                         required
-                        placeholder="Enter unit amount"
+                        placeholder="Enter size"
                         {...field}
                         onChange={(e) => {
                           const val = Number.parseFloat(e.target.value);
@@ -375,7 +436,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                     <FormLabel>Unit</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
+                      disabled={true}
                     >
                       <FormControl className={"w-full"}>
                         <SelectTrigger>
@@ -385,8 +447,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                       <SelectContent>
                         <SelectItem value="kg">kg</SelectItem>
                         <SelectItem value="mg">mg</SelectItem>
-                        <SelectItem value="l">l</SelectItem>
-                        <SelectItem value="g">g</SelectItem>
+                        <SelectItem value="ltr">ltr</SelectItem>
+                        <SelectItem value="gm">gm</SelectItem>
                         <SelectItem value="ml">ml</SelectItem>
                       </SelectContent>
                     </Select>
@@ -416,30 +478,24 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                   </FormItem>
                 )}
               />
-
-              {/* Actual Price Field */}
-              {/* <FormField
+              <FormField
                 control={itemForm.control}
-                name="actualPrice"
+                name="totalPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Actual Price</FormLabel>
+                    <FormLabel>Total Price</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="₹0.00"
                         {...field}
                         required
-                        onChange={(e) => field.onChange(e.target.value)}
-                        onBlur={(e) => {
-                          const formatted = formatPrice(e.target.value);
-                          field.onChange(formatted);
-                        }}
+                        value={getTotalPrice()}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <div className="col-span-2 flex justify-end gap-2.5">
                 <Button
                   variant="outline"
@@ -456,6 +512,12 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             </form>
           </Form>
         )}
+         <div className="w-full p-3 border border-dashed rounded-xl space-y-2 text-sm font-medium">
+          <div className="flex justify-between font-semibold m-0">
+            <span>Grand Total.</span>
+            <span>{formatPrice(golbalGrandTotal())}</span>
+          </div>
+        </div>
         <div className="text-center">
           <Button type="button" className="w-[50%]" onClick={handleSubmit}>
             Save changes
