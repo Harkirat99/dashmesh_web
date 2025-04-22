@@ -20,13 +20,15 @@ export function CustomerLedger() {
     const [endDate, setEndDate] = useState(moment().toISOString());
     
     const handleDateChanged = ({start, end}: any) => {
-      if(start)setStartDate(start);
+      console.log(start, end);
+      if(start){}setStartDate(start);
       if(end) setEndDate(end);
     } 
   
     useEffect(() => {
       dispatch(getCustomerLedgerDetail({id: `${id}`, startDate, endDate}));
     }, [startDate, endDate]);
+    
     useEffect(() => {
       dispatch(getSeasonsDropdown({}));
     }, [])
@@ -62,7 +64,7 @@ export function CustomerLedger() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Current Balance</CardTitle>
+              <CardTitle className="text-sm font-medium">Previous Balance</CardTitle>
               <IndianRupeeIcon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
