@@ -40,6 +40,23 @@ export const getCustomerDetail = createAsyncThunk<any, String, { rejectValue: st
   }
 );
 
+export const getCustomerLedgerDetail = createAsyncThunk<any, any, { rejectValue: string }>(
+  'customer/getLedgerDetail',
+  async ({id, startDate, endDate}, { rejectWithValue }) => {
+    try {
+      const response = await api.get<any>(`customer/ledger/${id}`, {
+        params: {
+          startDate,
+          endDate
+        }
+      });
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
 export const createCustomer = createAsyncThunk<any , Customer, { rejectValue: string }>(
   'customer/createCustomer',
   async (payload, { rejectWithValue }) => {
@@ -55,6 +72,7 @@ const initialState: any = {
   data: null,
   loading: false,
   error: null,
+  ledger: null,
   reducer: null
 };
 
@@ -85,6 +103,13 @@ const customerSlice: any = createSlice({
         state.data = action.payload;
       })
       .addCase(getCustomerDetail.rejected, handleRejected)
+       // Customer Ledger
+       .addCase(getCustomerLedgerDetail.pending, handlePending)
+       .addCase(getCustomerLedgerDetail.fulfilled, (state, action) => {
+         handleFulfilled(state);
+         state.ledger = action.payload;
+       })
+       .addCase(getCustomerLedgerDetail.rejected, handleRejected)
   },
 })as Slice<CustomerState, typeof customerSlice.reducers, 'customer'> & { reducer: any };;
 
