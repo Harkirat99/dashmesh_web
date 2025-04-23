@@ -71,6 +71,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
   const [quantity, setQuantity] = useState(1);
   const [isNew, setIsNew] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState("");
+
   const form = useForm({
     defaultValues: {
       date: "",
@@ -99,9 +100,9 @@ export function AddStock({ open, type, setOpen }: FormProps) {
         const payloadObject = {
           ...item,
           price: item?.price.slice(1).replace(/,/g, ""),
-        }
+        };
         delete payloadObject["totalPrice"];
-        return payloadObject
+        return payloadObject;
       });
 
       const payload = {
@@ -156,20 +157,26 @@ export function AddStock({ open, type, setOpen }: FormProps) {
   const additionalChargesWatcher = form.watch("additionalCharges");
   const taxAmountWatcher = form.watch("taxAmount");
 
-
   const getTotalPrice = () => {
     const numericPrice = parseFloat(price?.replace(/[^\d.-]/g, "") || "0");
     return formatPrice((numericPrice * quantity).toFixed(2));
   };
 
   const globalTotalAmount = () => {
-    return items.reduce((acc, curr) => acc + (deFormatPrice(curr?.price) * curr?.quantity), 0);
-  }
+    return items.reduce(
+      (acc, curr) => acc + deFormatPrice(curr?.price) * curr?.quantity,
+      0
+    );
+  };
 
   const golbalGrandTotal = () => {
     const totalOrderValue = globalTotalAmount();
-    return totalOrderValue + parseInt(deFormatPrice(additionalChargesWatcher)) + parseInt(deFormatPrice(taxAmountWatcher))
-  }
+    return (
+      totalOrderValue +
+      parseInt(deFormatPrice(additionalChargesWatcher)) +
+      parseInt(deFormatPrice(taxAmountWatcher))
+    );
+  };
 
   useEffect(() => {
     dispatch(getSuppliers({ limit: 100000 })).unwrap();
@@ -256,6 +263,36 @@ export function AddStock({ open, type, setOpen }: FormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tax Amount</FormLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!Array.isArray(data)}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a tax" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectGroup>
+                        {new Array(29).fill(0).map((_, index) => (
+                          <SelectItem value={String(index)} key={index}>
+                            {index}%
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* <FormField
+              control={form.control}
+              name="taxAmount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tax Amount</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="₹0.00"
@@ -271,7 +308,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="additionalCharges"
@@ -280,14 +317,14 @@ export function AddStock({ open, type, setOpen }: FormProps) {
                   <FormLabel>Additional charges</FormLabel>
                   <FormControl>
                     <Input
-                     placeholder="₹0.00"
-                     {...field}
-                     required
-                     onChange={(e) => field.onChange(e.target.value)}
-                     onBlur={(e) => {
-                       const formatted = formatPrice(e.target.value);
-                       field.onChange(formatted);
-                     }}
+                      placeholder="₹0.00"
+                      {...field}
+                      required
+                      onChange={(e) => field.onChange(e.target.value)}
+                      onBlur={(e) => {
+                        const formatted = formatPrice(e.target.value);
+                        field.onChange(formatted);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -584,17 +621,19 @@ export function AddStock({ open, type, setOpen }: FormProps) {
           </div>
           {additionalChargesWatcher && (
             <div className="flex justify-between m-0">
-            <span>Additional Charges.</span>
-            <span>+{additionalChargesWatcher}</span>
-          </div>
+              <span>Additional Charges.</span>
+              <span>+{additionalChargesWatcher}</span>
+            </div>
           )}
           {taxAmountWatcher && (
             <div className="flex justify-between m-0">
               <span>Tax Amount.</span>
-              <span>+{taxAmountWatcher}</span>
+              <span>
+                +{(Number(taxAmountWatcher) * globalTotalAmount()) / 100}
+              </span>
             </div>
           )}
-          
+
           <div className="flex justify-between font-semibold m-0">
             <span>Grand Total.</span>
             <span>{golbalGrandTotal()}</span>
