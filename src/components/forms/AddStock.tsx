@@ -171,10 +171,11 @@ export function AddStock({ open, type, setOpen }: FormProps) {
 
   const golbalGrandTotal = () => {
     const totalOrderValue = globalTotalAmount();
+    const taxAmount = (Number((taxAmountWatcher)) * totalOrderValue) / 100;
+    console.log("taxAmount", taxAmount);
     return (
       totalOrderValue +
-      parseInt(deFormatPrice(additionalChargesWatcher)) +
-      parseInt(deFormatPrice(taxAmountWatcher))
+      parseInt(deFormatPrice(additionalChargesWatcher)) + taxAmount
     );
   };
 

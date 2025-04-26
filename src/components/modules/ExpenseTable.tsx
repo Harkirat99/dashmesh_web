@@ -29,8 +29,8 @@ const ExpenseTable = ({ data, loading }: TransactionProps) => {
               <TableHead>Type</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Note</TableHead>
-              <TableHead>Harmeet Balance</TableHead>
               <TableHead>Sandeep Balance</TableHead>
+              <TableHead>Harmeet Balance</TableHead>
               <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
