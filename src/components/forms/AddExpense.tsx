@@ -8,10 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Dispatch, SetStateAction } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { createExpense, getExpenseLedger, getExpenses } from "@/store/slices/expenseSlice";
+import { createExpense, getExpenseLedger } from "@/store/slices/expenseSlice";
 
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -39,11 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatPrice } from "@/lib/converter";
-interface FormProps {
-  open: boolean;
-  type: string;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-}
+
 
 export function AddExpense({ open, setOpen, startDate, endDate }: any) {
   const dispatch = useDispatch<AppDispatch>();
