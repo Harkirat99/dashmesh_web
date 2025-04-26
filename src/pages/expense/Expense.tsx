@@ -6,7 +6,7 @@ import { Plus, Search } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../store/index";
-import { getExpenses, getExpenseLedger } from "@/store/slices/expenseSlice";
+import { getExpenseLedger } from "@/store/slices/expenseSlice";
 import ExpenseTable from "@/components/modules/ExpenseTable";
 import { AddExpense } from "@/components/forms/AddExpense";
 import moment from "moment-timezone";
