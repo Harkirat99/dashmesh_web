@@ -66,6 +66,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
       date: new Date(),
       amount: "",
       paymentType: "",
+      category: "add"
     },
   });
 
@@ -73,11 +74,12 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
     e.preventDefault();
     try {
       const formValues = form.getValues();
-      console.log("formValues?.amount", formValues?.amount);
+      let amt = parseInt(formValues?.amount.slice(1));
       const payload = {
         customer: defaultCustomer,
-        amount: parseInt(formValues?.amount.slice(1)),
+        amount: formValues?.category === "discount" ? -Math.abs(amt) : amt,
         paymentType: formValues?.paymentType,
+        category: formValues?.category,
         date: format(formValues?.date || Date.now(), "yyyy-MM-dd"),
       };
       console.log(payload);
@@ -100,6 +102,20 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
     }
   };
 
+  const typeOptions = [
+    {
+      name: "Add",
+      value: "add"
+    },
+    {
+      name: "Discount",
+      value: "discount"
+    },
+    {
+      name: "Intrest",
+      value: "intrest"
+    },
+  ]
   useEffect(() => {
     if (open) {
       manageDefaultCustomer();
@@ -203,6 +219,36 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
                       }}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={!Array.isArray(data)}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a tax" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectGroup>
+                        {typeOptions.map((item) => (
+                          <SelectItem value={item?.value} key={item?.value}>
+                            {item?.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

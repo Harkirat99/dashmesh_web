@@ -35,13 +35,13 @@ const OrderTable = ({ data, loading, customer }: OrdersProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>Product Name</TableHead>
               {(data as any)?.[0]?.customer?.firstName && (
                 <TableHead>Customer</TableHead>
               )}
               <TableHead>Quantity</TableHead>
               <TableHead>Price</TableHead>
-              {/* <TableHead>Actual Price</TableHead> */}
+              <TableHead>Total Price</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -67,7 +67,7 @@ const OrderTable = ({ data, loading, customer }: OrdersProps) => {
               : Array.isArray(data) &&
                 data?.map((item: any) => (
                   <TableRow key={item?.id}>
-                    <TableCell className="font-medium">{item?.name}</TableCell>
+                    <TableCell className="font-medium">{item?.product?.name}</TableCell>
                     {item?.customer?.firstName && (
                       <TableCell className="font-medium">
                         {item?.customer?.firstName +
@@ -75,9 +75,10 @@ const OrderTable = ({ data, loading, customer }: OrdersProps) => {
                           item?.customer?.lastName}
                       </TableCell>
                     )}
-                    <TableCell>{`${item?.quantity} X ${item?.unitAmount} ${item?.unit}`}</TableCell>
+                    <TableCell>{`${item?.quantity} X ${item?.size} ${item?.unit}`}</TableCell>
                     <TableCell>{formatPrice(item?.price)}</TableCell>
-                    {/* <TableCell>{item?.actualPrice}</TableCell> */}
+                    <TableCell>{formatPrice(item?.price * item?.quantity)}</TableCell>
+
                     <TableCell>{format(item?.date, "PPP")}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm">

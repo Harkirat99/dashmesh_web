@@ -41,6 +41,7 @@ const TransactionTable = ({ data, loading, customer }: TransactionProps) => {
               )}
               <TableHead>Amount</TableHead>
               <TableHead>Payment Type</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
@@ -75,6 +76,7 @@ const TransactionTable = ({ data, loading, customer }: TransactionProps) => {
                     )}
                     <TableCell>{formatPrice(item?.amount)}</TableCell>
                     <TableCell>{item?.paymentType}</TableCell>
+                    <TableCell>{item?.category == "add" ? "Add" : item?.category == "discount" ? "Discount" : "Intrest"}</TableCell>
                     <TableCell>{format(item?.date, "PPP")}</TableCell>
                   </TableRow>
                 ))}

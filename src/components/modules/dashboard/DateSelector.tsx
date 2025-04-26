@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -16,7 +16,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -36,6 +36,7 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
       endDate: "",
     },
   });
+
   const [selectedRange, setSelectedRange] = useState("All Time");
   const handleSelectChange = (value: any) => {
     setSelectedRange(value);
@@ -43,10 +44,20 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
     if (selectedOption) {
       form.setValue("startDate", selectedOption.startDate);
       form.setValue("endDate", selectedOption.endDate);
-      handleDateChanged({start:  selectedOption.startDate, end: selectedOption.endDate})
+      // handleDateChanged({start:  selectedOption.startDate, end: selectedOption.endDate})
     }
   };
 
+  const startDate = useWatch({ control: form.control, name: "startDate" });
+  const endDate = useWatch({ control: form.control, name: "endDate" });
+
+  useEffect(() => {
+    const handleDateChange = () => {
+      handleDateChanged({start:  startDate, end: endDate})
+    };
+  
+    handleDateChange();
+  }, [startDate, endDate]);
   return (
     <Form {...form}>
       <form className={cn("grid items-start gap-4 flex")}>
@@ -94,12 +105,11 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    //   selected={field.value}
+                    selected={new Date(field.value)}
                     onSelect={field.onChange}
                     disabled={(date) =>
                       date > new Date() || date < new Date("1900-01-01")
                     }
-                    // initialFocus
                   />
                 </PopoverContent>
               </Popover>
@@ -133,7 +143,7 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    //   selected={field.value}
+                    selected={new Date(field.value)}
                     onSelect={field.onChange}
                     disabled={(date) =>
                       date > new Date() || date < new Date("1900-01-01")

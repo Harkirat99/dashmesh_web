@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { BarChart3, LayoutDashboard, Package, ShoppingCart, Users, CalendarPlus, ShoppingBasket } from "lucide-react";
+import { BarChart3, LayoutDashboard, Package, ShoppingCart, Users, CalendarPlus, ShoppingBasket, Landmark, Wallet } from "lucide-react";
 
 import {
   Sidebar,
@@ -36,13 +36,18 @@ const navigationItems = [
     href: "/customers",
   },
   {
-    title: "Orders",
+    title: "Products",
     icon: Package,
+    href: "/products",
+  },
+  {
+    title: "Orders",
+    icon: ShoppingCart,
     href: "/orders",
   },
   {
     title: "Transactions",
-    icon: ShoppingCart,
+    icon: Landmark,
     href: "/transactions",
   },
   {
@@ -54,6 +59,11 @@ const navigationItems = [
     title: "Supplier",
     icon: ShoppingBasket,
     href: "/suppliers",
+  },
+  {
+    title: "Expenses",
+    icon: Wallet,
+    href: "/expense",
   },
   {
     title: "Analytics",

@@ -9,12 +9,14 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { formatPrice } from "@/lib/converter";
 
 interface TransactionProps {
   data: [];
   loading: boolean;
 }
-const SupplierTable = ({ data, loading }: TransactionProps) => {
+const StockTable = ({ data, loading }: TransactionProps) => {
     const navigate = useNavigate();
   
     return (
@@ -24,11 +26,11 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>Sr No</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Number</TableHead>
-              <TableHead>Account</TableHead>
-              <TableHead>Ifsc</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Order Value</TableHead>
+              <TableHead>Additional Charges</TableHead>
+              <TableHead>Tax Amount</TableHead>
+              <TableHead>Grand Total</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -53,11 +55,11 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
                 data?.map((item: any, index) => (
                   <TableRow key={item?.id} className="cursor-pointer" onClick={() => navigate(`/suppliers/${item?.id}`)}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.name}</TableCell>
-                    <TableCell>{item?.address}</TableCell>
-                    <TableCell>{item?.number}</TableCell>
-                    <TableCell>{item?.account}</TableCell>
-                    <TableCell>{item?.ifsc}</TableCell>
+                    <TableCell>{format(item?.date, "PPP")}</TableCell>
+                    <TableCell>{formatPrice(item?.orderValue)}</TableCell>
+                    <TableCell>{formatPrice(item?.additionalCharges)}</TableCell>
+                    <TableCell>{formatPrice(item?.taxAmount)}</TableCell>
+                    <TableCell>{formatPrice(item?.grandTotal)}</TableCell>
                   </TableRow>
                 ))}
           </TableBody>
@@ -67,4 +69,4 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
   );
 };
 
-export default SupplierTable;
+export default StockTable;

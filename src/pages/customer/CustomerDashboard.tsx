@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BarChart,
   Users,
@@ -15,7 +10,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
-import {  useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getCustomerDetail } from "@/store/slices/customerSlice";
 import { getOrders } from "@/store/slices/orderSlice";
 import { getTransactions } from "@/store/slices/transactionSlice";
@@ -26,22 +21,26 @@ import { Button } from "@/components/ui/button";
 import { AddOrder } from "@/components/forms/AddOrder";
 import { AddTransaction } from "@/components/forms/AddTransaction";
 
-
-
 const CustomerDashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams();
+  const navigate = useNavigate();
   const { data } = useSelector((state: RootState) => state.customer);
-  const { data: orders, loading: ordersLoading } = useSelector((state: RootState) => state.order);
-  const { data: transactions, loading: transactionLoading } = useSelector((state: RootState) => state.transaction);
+  const { data: orders, loading: ordersLoading } = useSelector(
+    (state: RootState) => state.order
+  );
+  const { data: transactions, loading: transactionLoading } = useSelector(
+    (state: RootState) => state.transaction
+  );
   const [addOrder, setAddOrder] = useState(false);
   const [addTransaction, setAddTransaction] = useState(false);
 
-
   useEffect(() => {
     dispatch(getCustomerDetail(`${id}`));
-    dispatch(getOrders({customer: id, limit: 10, sortBy: "createdAt:desc"}));
-    dispatch(getTransactions({customer: id, limit: 10, sortBy: "createdAt:desc"}));
+    dispatch(getOrders({ customer: id, limit: 10, sortBy: "createdAt:desc" }));
+    dispatch(
+      getTransactions({ customer: id, limit: 10, sortBy: "createdAt:desc" })
+    );
   }, []);
 
   return (
@@ -52,15 +51,22 @@ const CustomerDashboard = () => {
           <div className="flex items-center justify-between space-y-2">
             <div className="space-y-1">
               <h2 className="text-3xl font-bold tracking-tight">
-                {data?.firstName + " " + data?.lastName} {data?.fatherName ? `S/O ${data?.fatherName}` : ""} 
+                {data?.firstName + " " + data?.lastName}{" "}
+                {data?.fatherName ? `S/O ${data?.fatherName}` : ""}
               </h2>
+              <Button
+                variant="link"
+                onClick={() => navigate(`/customers/ledger/${id}`)}
+              >
+                View Ledger
+              </Button>
             </div>
             <div>
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              <p className="tracking-tight">{data?.address}</p>
-            </div>
-            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                <p className="tracking-tight">{data?.address}</p>
+              </div>
+              <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 <p className="tracking-tight">+91 {data?.number}</p>
               </div>
@@ -70,10 +76,7 @@ const CustomerDashboard = () => {
                   <p className="tracking-tight">+91 {data?.alternateNumber}</p>
                 </div>
               )}
-              
-              
             </div>
-           
           </div>
         </Card>
 
@@ -110,31 +113,36 @@ const CustomerDashboard = () => {
             </CardContent>
           </Card>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7"></div>
         <div className="flex items-center justify-between">
           <h4 className="text-2xl font-bold tracking-tight">
             Recent Transactions
           </h4>
           <Button onClick={() => setAddTransaction(!addTransaction)}>
             <Plus className="mr-2 h-4 w-4" />
-              Add Transaction
+            Add Transaction
           </Button>
         </div>
-        <TransactionTable data={transactions} loading={transactionLoading} customer={id} />
+        <TransactionTable
+          data={transactions}
+          loading={transactionLoading}
+          customer={id}
+        />
         <div className="flex items-center justify-between">
-          <h4 className="text-2xl font-bold tracking-tight">
-            Recent Orders
-          </h4>
+          <h4 className="text-2xl font-bold tracking-tight">Recent Orders</h4>
           <Button onClick={() => setAddOrder(!addOrder)}>
             <Plus className="mr-2 h-4 w-4" />
-              Add Order
+            Add Order
           </Button>
         </div>
-        <OrderTable data={orders} loading={ordersLoading} customer={id}/>
+        <OrderTable data={orders} loading={ordersLoading} customer={id} />
       </div>
-     <AddOrder open={addOrder} setOpen={setAddOrder} type="add" />
-     <AddTransaction open={addTransaction} setOpen={setAddTransaction} type="add" />
+      <AddOrder open={addOrder} setOpen={setAddOrder} type="add" />
+      <AddTransaction
+        open={addTransaction}
+        setOpen={setAddTransaction}
+        type="add"
+      />
     </>
   );
 };

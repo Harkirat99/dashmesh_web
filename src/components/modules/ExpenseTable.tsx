@@ -8,27 +8,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { formatPrice } from "@/lib/converter";
 
 interface TransactionProps {
   data: [];
   loading: boolean;
 }
-const SupplierTable = ({ data, loading }: TransactionProps) => {
-    const navigate = useNavigate();
+const ExpenseTable = ({ data, loading }: TransactionProps) => {
   
-    return (
+  return (
     <Card className="gap-0">
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Sr No</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Number</TableHead>
-              <TableHead>Account</TableHead>
-              <TableHead>Ifsc</TableHead>
+              <TableHead>Source</TableHead>
+              <TableHead>Partner</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Note</TableHead>
+              <TableHead>Harmeet Balance</TableHead>
+              <TableHead>Sandeep Balance</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -51,13 +54,16 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
                 ))
               : Array.isArray(data) &&
                 data?.map((item: any, index) => (
-                  <TableRow key={item?.id} className="cursor-pointer" onClick={() => navigate(`/suppliers/${item?.id}`)}>
+                  <TableRow key={item?.id}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.name}</TableCell>
-                    <TableCell>{item?.address}</TableCell>
-                    <TableCell>{item?.number}</TableCell>
-                    <TableCell>{item?.account}</TableCell>
-                    <TableCell>{item?.ifsc}</TableCell>
+                    <TableCell>{item?.source =="transaction" ? "Transaction" : "Expense"}</TableCell>
+                    <TableCell>{item?.partner}</TableCell>
+                    <TableCell>{"Paid"}</TableCell>
+                    <TableCell>{formatPrice(item?.amount)}</TableCell>
+                    <TableCell>{item?.note}</TableCell>
+                    <TableCell>{formatPrice(item?.p1Balance)}</TableCell>
+                    <TableCell>{formatPrice(item?.p2Balance)}</TableCell>
+                    <TableCell>{format(item?.date, "PPP")}</TableCell>
                   </TableRow>
                 ))}
           </TableBody>
@@ -67,4 +73,4 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
   );
 };
 
-export default SupplierTable;
+export default ExpenseTable;
