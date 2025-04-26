@@ -139,7 +139,7 @@ export function AddSupplier({ open, setOpen }: FormProps) {
                   <FormLabel>Account Number</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="Enter account number"
                       {...field}
                       required
