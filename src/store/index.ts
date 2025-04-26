@@ -10,6 +10,7 @@ import seasonSlice from './slices/seasonSlice';
 import supplierSlice from './slices/supplierSlice';
 import stockSlice from './slices/stockSlice';
 import productSlice from './slices/productSlice';
+import expenseSlice from './slices/expenseSlice';
 
 type RootState = ReturnType<typeof store.getState>;
 type AppDispatch = typeof store.dispatch;
@@ -32,7 +33,8 @@ export const store: any = configureStore({
     season: seasonSlice,
     supplier: supplierSlice,
     stock: stockSlice,
-    product: productSlice
+    product: productSlice,
+    expense: expenseSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

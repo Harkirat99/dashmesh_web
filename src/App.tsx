@@ -14,6 +14,7 @@ import Suppliers from "./pages/supplier/Suppliers";
 import Products from "./pages/product/Products";
 import SupplierDashboard from "./pages/supplier/SupplierDashboard";
 import { CustomerLedger } from "./pages/customer/CustomerLedger";
+import Expense from "./pages/expense/Expense";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="suppliers" element={<Suppliers />} />
             <Route path="suppliers/:id" element={<SupplierDashboard />} />
             <Route path="products" element={<Products />} />
+            <Route path="expense" element={<Expense />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

@@ -27,6 +27,11 @@ export interface Season {
     name: string
 }
 
+export interface Expense {
+    date?: Date,
+    partner?: String,
+    amount?: Number
+}
 
 export interface Supplier {
     name?: string,
