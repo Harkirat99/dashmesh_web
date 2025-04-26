@@ -63,7 +63,7 @@ const Expense = () => {
             <ExpenseTable data={data?.transactions} loading={loading} />
           </CardContent>
         </Card>
-        <AddExpense open={open} type="global" setOpen={setOpen}/>
+        <AddExpense open={open} type="global" setOpen={setOpen} startDate={startDate} endDate={endDate}/>
       </div>
     </>
   );

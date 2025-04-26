@@ -17,7 +17,6 @@ interface TransactionProps {
 }
 const ExpenseTable = ({ data, loading }: TransactionProps) => {
   
-  console.log("DATA", data)
   return (
     <Card className="gap-0">
       <CardContent>

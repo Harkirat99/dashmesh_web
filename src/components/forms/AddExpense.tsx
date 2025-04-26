@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { createExpense, getExpenses } from "@/store/slices/expenseSlice";
+import { createExpense, getExpenseLedger, getExpenses } from "@/store/slices/expenseSlice";
 
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -45,7 +45,7 @@ interface FormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function AddExpense({ open, setOpen }: FormProps) {
+export function AddExpense({ open, setOpen, startDate, endDate }: any) {
   const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm({
@@ -61,6 +61,7 @@ export function AddExpense({ open, setOpen }: FormProps) {
     e.preventDefault();
     try {
       const formValues = form.getValues();
+      console.log("formValues", formValues);
       const payload = {
        ...formValues,
        amount: parseInt(formValues?.amount.slice(1))
@@ -70,7 +71,7 @@ export function AddExpense({ open, setOpen }: FormProps) {
         setOpen(false);
         form.reset();
         await dispatch(
-            getExpenses({ limit: 100000, sortBy: "createdAt:desc" })
+          getExpenseLedger({startDate, endDate})
         ).unwrap();
       toast("Created successfully");
     } catch (err) {
