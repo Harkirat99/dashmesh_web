@@ -80,7 +80,7 @@ const Customers = () => {
                       </TableRow>
                     ))
                   : Array.isArray(data) && data?.map((item: any) => (
-                      <TableRow key={item?.id} onClick={() => navigate(`${item?.id}`)}>
+                      <TableRow key={item?.id} onClick={() => navigate(`${item?.id}`)} className="cursor-pointer">
                         <TableCell className="font-medium">
                           {item?.firstName + " " + item?.lastName}
                         </TableCell>

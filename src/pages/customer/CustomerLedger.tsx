@@ -46,6 +46,7 @@ export function CustomerLedger() {
     dispatch(getSeasonsDropdown({}));
   }, []);
 
+  console.log(ledger);
   return (
     <>
       <Header title="Customers" />
@@ -58,7 +59,7 @@ export function CustomerLedger() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Current Balance
+                Balance
               </CardTitle>
               <BarChart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -122,8 +123,8 @@ export function CustomerLedger() {
                         <ul className="list-disc ml-4">
                           {entry.items.map((item: any, idx: number) => (
                             <li key={idx}>
-                              {item.name} {item.quantity}×{item.size}:{" "}
-                              {item.orderPrice}
+                              {item.name} {item.quantity}×{item.size} {item.unit}:{" "}
+                              {item.price}
                             </li>
                           ))}
                         </ul>
@@ -150,10 +151,6 @@ export function CustomerLedger() {
       <div>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild>
-          <Button>
-            <Printer className="mr-2 h-4 w-4" />
-            Print Bill
-          </Button>
         </DialogTrigger>
         <DialogContent
           className="!w-[95vw] !max-w-[95vw] !h-[90vh] p-0 overflow-hidden flex flex-col"

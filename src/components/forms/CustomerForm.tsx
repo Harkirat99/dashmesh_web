@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -57,6 +57,10 @@ export function CustomerForm({ open, type, setOpen }: FormProps) {
   const resetForm = () => {
     setFormData(defaultValues);
   };
+
+  useEffect(() => {
+    if(!open) resetForm();
+  }, [open])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

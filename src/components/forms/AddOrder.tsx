@@ -74,7 +74,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
 
   const form = useForm({
     defaultValues: {
-      date: "",
+      date: new Date(),
     },
   });
 
@@ -157,6 +157,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
     }
   };
   const price = itemForm.watch("price");
+  
   const getTotalPrice = () => {
     const numericPrice = parseFloat(price?.replace(/[^\d.-]/g, "") || "0");
     return formatPrice((numericPrice * quantity).toFixed(2));
@@ -241,10 +242,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
+                        selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
                         initialFocus
                       />
                     </PopoverContent>
@@ -467,7 +466,14 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                         placeholder="₹0.00"
                         {...field}
                         required
-                        onChange={(e) => field.onChange(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/[^\d.]/g, '');
+                          const parts = value.split('.');
+                          if (parts.length > 2) {
+                            return;
+                          }
+                          field.onChange(value);
+                        }}
                         onBlur={(e) => {
                           const formatted = formatPrice(e.target.value);
                           field.onChange(formatted);
