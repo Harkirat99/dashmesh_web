@@ -24,7 +24,8 @@ const ProductTable = ({ data, loading }: TransactionProps) => {
               <TableHead>Sr No</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Supplier</TableHead>
-              <TableHead>Price per-peice</TableHead>
+              <TableHead>Raw Price</TableHead>
+              <TableHead>Final Price</TableHead>
               <TableHead>Size</TableHead>
               <TableHead>Quantity</TableHead>
               <TableHead>Left Quantity</TableHead>
@@ -58,6 +59,7 @@ const ProductTable = ({ data, loading }: TransactionProps) => {
                     <TableCell>{item?.name}</TableCell>
                     <TableCell>{item?.supplier?.name}</TableCell>
                     <TableCell>{item?.price}</TableCell>
+                    <TableCell>{item?.totalPrice}</TableCell>
                     <TableCell>
                       {item?.size} X {item?.unit}
                     </TableCell>

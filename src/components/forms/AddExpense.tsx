@@ -57,17 +57,16 @@ export function AddExpense({ open, setOpen, startDate, endDate }: any) {
     e.preventDefault();
     try {
       const formValues = form.getValues();
-      console.log("formValues", formValues);
       const payload = {
        ...formValues,
-       amount: parseInt(formValues?.amount.slice(1))
+       amount: Number(formValues?.amount.replace(/[₹,]/g, ''))
       };
-        await dispatch(createExpense(payload)).unwrap();
-        setOpen(false);
-        form.reset();
-        await dispatch(
-          getExpenseLedger({startDate: moment(startDate).subtract(5, "minutes").toISOString(), endDate: moment(endDate).add(5, "minutes").toISOString()})
-        ).unwrap();
+      await dispatch(createExpense(payload)).unwrap();
+      setOpen(false);
+      form.reset();
+      await dispatch(
+        getExpenseLedger({startDate: moment(startDate).subtract(5, "minutes").toISOString(), endDate: moment(endDate).add(5, "minutes").toISOString()})
+      ).unwrap();
       toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());

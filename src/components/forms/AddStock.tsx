@@ -43,7 +43,7 @@ import { Card, CardContent } from "../ui/card";
 import { RootState } from "@/store/index";
 import { useParams } from "react-router-dom";
 import { formatPrice, deFormatPrice } from "@/lib/converter";
-import { getSuppliers } from "@/store/slices/supplierSlice";
+import { getSupplierDetail, getSuppliers } from "@/store/slices/supplierSlice";
 import { createStock, getStocks } from "@/store/slices/stockSlice";
 
 interface FormProps {
@@ -108,7 +108,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
       const payload = {
         date: format(form.getValues().date || Date.now(), "yyyy-MM-dd"),
         supplier: selectedSupplier,
-        taxAmount: deFormatPrice(form.getValues().taxAmount),
+        taxAmount: form.getValues().taxAmount,
         additionalCharges: deFormatPrice(form.getValues().additionalCharges),
         products: formattedItems,
       };
@@ -116,6 +116,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
       setOpen(false);
       resetForm();
       await dispatch(getStocks({ supplier: id })).unwrap();
+      await dispatch(getSupplierDetail(`${id}`)).unwrap();
       toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());
@@ -158,8 +159,13 @@ export function AddStock({ open, type, setOpen }: FormProps) {
   const taxAmountWatcher = form.watch("taxAmount");
 
   const getTotalPrice = () => {
-    const numericPrice = parseFloat(price?.replace(/[^\d.-]/g, "") || "0");
-    return formatPrice((numericPrice * quantity).toFixed(2));
+    try {
+      const numericPrice = parseFloat(price?.replace(/[^\d.-]/g, "") || "0");
+      return formatPrice((numericPrice * quantity).toFixed(2));
+  
+    } catch (error) {
+      return "0.00";
+    }
   };
 
   const globalTotalAmount = () => {
@@ -321,7 +327,14 @@ export function AddStock({ open, type, setOpen }: FormProps) {
                       placeholder="₹0.00"
                       {...field}
                       required
-                      onChange={(e) => field.onChange(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^\d.]/g, '');
+                        const parts = value.split('.');
+                        if (parts.length > 2) {
+                          return;
+                        }
+                        field.onChange(value);
+                      }}
                       onBlur={(e) => {
                         const formatted = formatPrice(e.target.value);
                         field.onChange(formatted);
@@ -546,9 +559,6 @@ export function AddStock({ open, type, setOpen }: FormProps) {
                           <Calendar
                             mode="single"
                             onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
                             initialFocus
                           />
                         </PopoverContent>
@@ -568,7 +578,14 @@ export function AddStock({ open, type, setOpen }: FormProps) {
                           placeholder="₹0.00"
                           {...field}
                           required
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^\d.]/g, '');
+                            const parts = value.split('.');
+                            if (parts.length > 2) {
+                              return;
+                            }
+                            field.onChange(value);
+                          }}
                           onBlur={(e) => {
                             const formatted = formatPrice(e.target.value);
                             field.onChange(formatted);
@@ -623,21 +640,21 @@ export function AddStock({ open, type, setOpen }: FormProps) {
           {additionalChargesWatcher && (
             <div className="flex justify-between m-0">
               <span>Additional Charges.</span>
-              <span>+{additionalChargesWatcher}</span>
+              <span>+{formatPrice(additionalChargesWatcher)}</span>
             </div>
           )}
           {taxAmountWatcher && (
             <div className="flex justify-between m-0">
               <span>Tax Amount.</span>
               <span>
-                +{(Number(taxAmountWatcher) * globalTotalAmount()) / 100}
+                +{formatPrice((Number(taxAmountWatcher) * globalTotalAmount()) / 100)}
               </span>
             </div>
           )}
 
           <div className="flex justify-between font-semibold m-0">
             <span>Grand Total.</span>
-            <span>{golbalGrandTotal()}</span>
+            <span>{formatPrice(golbalGrandTotal())}</span>
           </div>
         </div>
         <div className="text-center">
