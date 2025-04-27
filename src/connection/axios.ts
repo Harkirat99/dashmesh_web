@@ -9,7 +9,7 @@ interface AuthResponse {
     }
 }
 const api: AxiosInstance = axios.create({
-  baseURL: "http://localhost:8000/api/v1",
+  baseURL: "https://dashmeshtreding.shop/api/v1",
   timeout: 10000,
 });
 
