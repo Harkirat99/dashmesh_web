@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatPrice } from "@/lib/converter";
+import moment from "moment-timezone";
 
 
 export function AddExpense({ open, setOpen, startDate, endDate }: any) {
@@ -61,12 +62,11 @@ export function AddExpense({ open, setOpen, startDate, endDate }: any) {
        ...formValues,
        amount: parseInt(formValues?.amount.slice(1))
       };
-
         await dispatch(createExpense(payload)).unwrap();
         setOpen(false);
         form.reset();
         await dispatch(
-          getExpenseLedger({startDate, endDate})
+          getExpenseLedger({startDate: moment(startDate).subtract(5, "minutes").toISOString(), endDate: moment(endDate).add(5, "minutes").toISOString()})
         ).unwrap();
       toast("Created successfully");
     } catch (err) {
@@ -156,7 +156,14 @@ export function AddExpense({ open, setOpen, startDate, endDate }: any) {
                       placeholder="₹0.00"
                       {...field}
                       required
-                      onChange={(e) => field.onChange(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^\d.]/g, '');
+                        const parts = value.split('.');
+                        if (parts.length > 2) {
+                          return;
+                        }
+                        field.onChange(value);
+                      }}
                       onBlur={(e) => {
                         const formatted = formatPrice(e.target.value);
                         field.onChange(formatted);

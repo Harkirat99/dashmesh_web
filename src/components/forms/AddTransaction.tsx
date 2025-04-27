@@ -66,7 +66,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
       date: new Date(),
       amount: "",
       paymentType: "",
-      category: "add"
+      category: "purchase"
     },
   });
 
@@ -95,8 +95,6 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
   };
 
   const manageDefaultCustomer = () => {
-    console.log("data", Array.isArray(data));
-    
     if (!Array.isArray(data)) {
       setDefaultCustomer(data?._id);
     }
@@ -104,8 +102,8 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
 
   const typeOptions = [
     {
-      name: "Add",
-      value: "add"
+      name: "Purchase",
+      value: "purchase"
     },
     {
       name: "Discount",
@@ -212,7 +210,14 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
                       placeholder="₹0.00"
                       {...field}
                       required
-                      onChange={(e) => field.onChange(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[^\d.]/g, '');
+                        const parts = value.split('.');
+                        if (parts.length > 2) {
+                          return;
+                        }
+                        field.onChange(value);
+                      }}
                       onBlur={(e) => {
                         const formatted = formatPrice(e.target.value);
                         field.onChange(formatted);
@@ -232,7 +237,6 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
-                    disabled={!Array.isArray(data)}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
