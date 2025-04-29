@@ -67,7 +67,7 @@ export function AddSupplier({ open, setOpen }: FormProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{"Add"} Supplier</DialogTitle>
         </DialogHeader>

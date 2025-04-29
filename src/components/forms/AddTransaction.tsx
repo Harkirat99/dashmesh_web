@@ -122,7 +122,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{type == "add" ? "Add" : "Edit"} Transaction</DialogTitle>
         </DialogHeader>

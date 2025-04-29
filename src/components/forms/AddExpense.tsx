@@ -75,7 +75,7 @@ export function AddExpense({ open, setOpen, startDate, endDate }: any) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{true ? "Add" : "Edit"} Expense</DialogTitle>
         </DialogHeader>

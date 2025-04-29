@@ -191,7 +191,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[50%]">
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{type == "add" ? "Add" : "Edit"} Stock</DialogTitle>
           <DialogDescription>

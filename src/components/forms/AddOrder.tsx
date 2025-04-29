@@ -6,6 +6,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogOverlay
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -175,7 +176,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[50%]">
+      {/* <DialogOverlay> */}
+      <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{type == "add" ? "Add" : "Edit"} Order</DialogTitle>
           <DialogDescription>
@@ -530,6 +532,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
           </Button>
         </div>
       </DialogContent>
+      {/* </DialogOverlay> */}
+      
     </Dialog>
   );
 }

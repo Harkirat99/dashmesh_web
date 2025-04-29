@@ -44,7 +44,6 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
     if (selectedOption) {
       form.setValue("startDate", selectedOption.startDate);
       form.setValue("endDate", selectedOption.endDate);
-      // handleDateChanged({start:  selectedOption.startDate, end: selectedOption.endDate})
     }
   };
 
@@ -53,15 +52,16 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
 
   useEffect(() => {
     const handleDateChange = () => {
-      handleDateChanged({start:  startDate, end: endDate})
+      handleDateChanged({start: startDate, end: endDate})
     };
   
     handleDateChange();
   }, [startDate, endDate]);
+
   return (
     <Form {...form}>
-      <form className={cn("grid items-start gap-4 flex")}>
-        <div className="grid gap-2">
+      <form className="flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-auto">
           <Label htmlFor="text">Season</Label>
           <Select value={selectedRange} onValueChange={handleSelectChange}>
             <SelectTrigger className="w-full">
@@ -83,7 +83,7 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
           control={form.control}
           name="startDate"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
+            <FormItem className="w-full md:w-auto">
               <FormLabel>Start date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
@@ -91,7 +91,7 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "pl-3 text-left font-normal",
+                        "w-full md:w-[200px] pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -117,11 +117,12 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="endDate"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
+            <FormItem className="w-full md:w-auto">
               <FormLabel>End date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
@@ -129,7 +130,7 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "pl-3 text-left font-normal",
+                        "w-full md:w-[200px] pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -148,7 +149,6 @@ const DateSelector = ({ data, handleDateChanged }: any) => {
                     disabled={(date) =>
                       date > new Date() || date < new Date("1900-01-01")
                     }
-                    // initialFocus
                   />
                 </PopoverContent>
               </Popover>
