@@ -80,7 +80,7 @@ const AppSidebar = () => {
   const handleLogout = () => {
     dispatch(logout());
   }
-  
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>

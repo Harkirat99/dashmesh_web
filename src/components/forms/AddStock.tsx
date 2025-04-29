@@ -200,7 +200,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
         </DialogHeader>
         <Form {...form}>
           <form
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+            className="grid grid-cols-2 sm:grid-cols-2 gap-4"
             // onSubmit={handleSubmit}
             onSubmit={(e) => e.preventDefault()}
           >
@@ -392,7 +392,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
           </form>
         </Form>
         {isNew && (
-          <Card className="p-5">
+          <Card className="py-5 px-2">
             <Form {...itemForm}>
               <form
                 className="grid grid-cols-2 gap-6"
@@ -438,7 +438,7 @@ export function AddStock({ open, type, setOpen }: FormProps) {
                             {...field}
                             type="number"
                             min={1}
-                            className="w-20 text-center"
+                            className="w-20 text-center no-spinner p-0"
                             value={quantity}
                             onChange={(e) => {
                               const val = Number.parseInt(e.target.value);

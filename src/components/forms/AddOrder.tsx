@@ -6,7 +6,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogOverlay
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -302,223 +301,226 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
           </form>
         </Form>
         {isNew && (
-          <Form {...itemForm}>
-            <form
-              className="grid grid-cols-2 gap-6"
-              onSubmit={itemForm.handleSubmit(handleSaveItems)}
-            >
-              {/* <FormField
-                control={itemForm.control}
-                name="productName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Product Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter product name"
-                        className="w-full"
-                        {...field}
-                        required
-                        onChange={(e) => field.onChange(e.target.value)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-              <div className="grid gap-2">
-                <Label htmlFor="text">Product *</Label>
-                <Select
-                  value={selectedProduct?.id}
-                  onValueChange={(value) => {
-                    const selected = dropdown.find(
-                      (item: any) => item.id === value
-                    );
-                    setSelectedProduct(selected);
-                    if (selected) {
-                      itemForm.setValue("size", selected.size);
-                      itemForm.setValue("unit", selected.unit);
-                      itemForm.setValue("orgPrice", selected.price);
-                    }
-                  }}
-                  // disabled={!Array.isArray(data)}
-                  // value={selectedProduct?.id}
-                  // onValueChange={(value) => setDefaultCustomer(value)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a Product" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {dropdown?.map((item: any) => (
-                        <SelectItem value={item?.id} key={item?.id}>
-                          {item?.name}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              <FormField
-                control={itemForm.control}
-                name="quantity"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-2">
-                    <FormLabel>Quantity</FormLabel>
-                    <div className="flex items-center gap-4">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={decrementQuantity}
-                        disabled={quantity <= 1}
-                      >
-                        <Minus className="h-4 w-4" />
-                      </Button>
+          <Card className="py-5 px-2">
+            <Form {...itemForm}>
+              <form
+                className="grid grid-cols-2 gap-6"
+                onSubmit={itemForm.handleSubmit(handleSaveItems)}
+              >
+                {/* <FormField
+                  control={itemForm.control}
+                  name="productName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Name</FormLabel>
                       <FormControl>
                         <Input
+                          placeholder="Enter product name"
+                          className="w-full"
                           {...field}
+                          required
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> */}
+                <div className="grid gap-2">
+                  <Label htmlFor="text">Product *</Label>
+                  <Select
+                    value={selectedProduct?.id}
+                    onValueChange={(value) => {
+                      const selected = dropdown.find(
+                        (item: any) => item.id === value
+                      );
+                      setSelectedProduct(selected);
+                      if (selected) {
+                        itemForm.setValue("size", selected.size);
+                        itemForm.setValue("unit", selected.unit);
+                        itemForm.setValue("orgPrice", selected.price);
+                      }
+                    }}
+                    // disabled={!Array.isArray(data)}
+                    // value={selectedProduct?.id}
+                    // onValueChange={(value) => setDefaultCustomer(value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {dropdown?.map((item: any) => (
+                          <SelectItem value={item?.id} key={item?.id}>
+                            {item?.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <FormField
+                  control={itemForm.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col gap-2">
+                      <FormLabel>Quantity</FormLabel>
+                      <div className="flex items-center gap-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={decrementQuantity}
+                          disabled={quantity <= 1}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min={1}
+                            className="text-center no-spinner p-0"
+                            value={quantity}
+                            onChange={(e) => {
+                              const val = Number.parseInt(e.target.value);
+                              if (!isNaN(val) && val >= 1) {
+                                setQuantity(val);
+                                field.onChange(val);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={incrementQuantity}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={itemForm.control}
+                  name="size"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Size</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={true}
                           type="number"
-                          min={1}
-                          className="w-20 text-center"
-                          value={quantity}
+                          min={0}
+                          step="0.01"
+                          required
+                          placeholder="Enter size"
+                          {...field}
                           onChange={(e) => {
-                            const val = Number.parseInt(e.target.value);
-                            if (!isNaN(val) && val >= 1) {
-                              setQuantity(val);
-                              field.onChange(val);
-                            }
+                            const val = Number.parseFloat(e.target.value);
+                            field.onChange(isNaN(val) ? 0 : val);
                           }}
                         />
                       </FormControl>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={incrementQuantity}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={itemForm.control}
-                name="size"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Size</FormLabel>
-                    <FormControl>
-                      <Input
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={itemForm.control}
+                  name="unit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Unit</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
                         disabled={true}
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        required
-                        placeholder="Enter size"
-                        {...field}
-                        onChange={(e) => {
-                          const val = Number.parseFloat(e.target.value);
-                          field.onChange(isNaN(val) ? 0 : val);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={itemForm.control}
-                name="unit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Unit</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={true}
-                    >
-                      <FormControl className={"w-full"}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select unit" />
-                        </SelectTrigger>
+                      >
+                        <FormControl className={"w-full"}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select unit" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="kg">kg</SelectItem>
+                          <SelectItem value="mg">mg</SelectItem>
+                          <SelectItem value="ltr">ltr</SelectItem>
+                          <SelectItem value="gm">gm</SelectItem>
+                          <SelectItem value="ml">ml</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={itemForm.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="₹0.00"
+                          {...field}
+                          required
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/[^\d.]/g, '');
+                            const parts = value.split('.');
+                            if (parts.length > 2) {
+                              return;
+                            }
+                            field.onChange(value);
+                          }}
+                          onBlur={(e) => {
+                            const formatted = formatPrice(e.target.value);
+                            field.onChange(formatted);
+                          }}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="kg">kg</SelectItem>
-                        <SelectItem value="mg">mg</SelectItem>
-                        <SelectItem value="ltr">ltr</SelectItem>
-                        <SelectItem value="gm">gm</SelectItem>
-                        <SelectItem value="ml">ml</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={itemForm.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="₹0.00"
-                        {...field}
-                        required
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/[^\d.]/g, '');
-                          const parts = value.split('.');
-                          if (parts.length > 2) {
-                            return;
-                          }
-                          field.onChange(value);
-                        }}
-                        onBlur={(e) => {
-                          const formatted = formatPrice(e.target.value);
-                          field.onChange(formatted);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={itemForm.control}
-                name="totalPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Total Price</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="₹0.00"
-                        {...field}
-                        required
-                        value={getTotalPrice()}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="col-span-2 flex justify-end gap-2.5">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    itemForm.reset();
-                    setIsNew(false);
-                    setQuantity(1);
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">Submit</Button>
-              </div>
-            </form>
-          </Form>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={itemForm.control}
+                  name="totalPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Total Price</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="₹0.00"
+                          {...field}
+                          required
+                          value={getTotalPrice()}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="col-span-2 flex justify-end gap-2.5">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      itemForm.reset();
+                      setIsNew(false);
+                      setQuantity(1);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit">Submit</Button>
+                </div>
+              </form>
+            </Form>
+          </Card>
+
         )}
          <div className="w-full p-3 border border-dashed rounded-xl space-y-2 text-sm font-medium">
           <div className="flex justify-between font-semibold m-0">
