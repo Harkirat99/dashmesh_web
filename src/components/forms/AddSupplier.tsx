@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { getSuppliers, createSupplier } from "@/store/slices/supplierSlice";
+import { getSuppliers, createSupplier, updateSupplier } from "@/store/slices/supplierSlice";
 
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -28,9 +28,10 @@ interface FormProps {
   open: boolean;
   type: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  edit?: any;
 }
 
-export function AddSupplier({ open, setOpen }: FormProps) {
+export function AddSupplier({ open, setOpen, edit }: FormProps) {
   const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm({
@@ -48,22 +49,47 @@ export function AddSupplier({ open, setOpen }: FormProps) {
     try {
       const formValues = form.getValues();
 
-        const payload = {
+        const payload: {
+          name: string;
+          address: string;
+          number: string;
+          account: string;
+          ifsc: string;
+          id?: string;
+          user?: any;
+        } = {
           name: formValues?.name,
           address: formValues?.address,
           number: formValues?.number,
           account: formValues?.account,
           ifsc: formValues?.ifsc,
         };
-        await dispatch(createSupplier(payload)).unwrap();
+        if(edit) {
+          delete payload["id"];
+          delete payload["user"];
+          await dispatch(updateSupplier({id: edit?.id, ...payload})).unwrap();
+          toast("Updated successfully");
+        }else{
+          await dispatch(createSupplier(payload)).unwrap();
+          toast("Created successfully");
+        }
         setOpen(false);
         form.reset();
         await dispatch(getSuppliers({limit: 100000, sortBy: "createdAt:desc"})).unwrap();
-        toast("Created successfully");
     } catch (err) {
       toast.error(err?.toString());
     }
   };
+
+  useEffect(() => {
+    if(edit) {
+      form.setValue("name", edit?.name);
+      form.setValue("address", edit?.address);
+      form.setValue("number", edit?.number);
+      form.setValue("account", edit?.account);
+      form.setValue("ifsc", edit?.ifsc);
+    }
+  }, [edit]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

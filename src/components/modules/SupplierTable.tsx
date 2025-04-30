@@ -9,14 +9,18 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../ui/button";
+import { Pencil } from "lucide-react";
 
 interface TransactionProps {
   data: [];
   loading: boolean;
+  setOpen: (open: boolean) => void;
+  setEdit: (edit: any) => void;
 }
-const SupplierTable = ({ data, loading }: TransactionProps) => {
+const SupplierTable = ({ data, loading, setOpen, setEdit }: TransactionProps) => {
     const navigate = useNavigate();
-  
+
     return (
     <Card className="gap-0">
       <CardContent>
@@ -29,6 +33,7 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
               <TableHead>Number</TableHead>
               <TableHead>Account</TableHead>
               <TableHead>Ifsc</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -51,13 +56,18 @@ const SupplierTable = ({ data, loading }: TransactionProps) => {
                 ))
               : Array.isArray(data) &&
                 data?.map((item: any, index) => (
-                  <TableRow key={item?.id} className="cursor-pointer" onClick={() => navigate(`/suppliers/${item?.id}`)}>
+                  <TableRow key={item?.id} >
                     <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.name}</TableCell>
+                    <TableCell onClick={() => navigate(`/suppliers/${item?.id}`)} className="cursor-pointer font-medium hover:underline" >{item?.name}</TableCell>
                     <TableCell>{item?.address}</TableCell>
                     <TableCell>{item?.number}</TableCell>
                     <TableCell>{item?.account}</TableCell>
                     <TableCell>{item?.ifsc}</TableCell>
+                    <TableCell className="text-right">
+                          <Button variant="ghost" size="sm" className="cursor-pointer" onClick={() => {setOpen(true); setEdit(item)}}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
           </TableBody>

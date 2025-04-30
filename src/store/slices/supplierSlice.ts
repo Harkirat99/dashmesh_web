@@ -58,6 +58,18 @@ export const createSupplier = createAsyncThunk<
   }
 });
 
+export const updateSupplier = createAsyncThunk<
+  any,
+  any,
+  { rejectValue: string }
+>("supplier/updateSupplier", async (payload, { rejectWithValue }) => {
+  try {
+    const response = await api.patch<any>(`supplier/${payload?.id}`, payload);
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error?.response?.data?.message || "Request failed");
+  }
+});
 const initialState: any = {
   data: null,
   detail: null,
@@ -86,6 +98,10 @@ const supplierSlice: any = createSlice({
       .addCase(createSupplier.pending, handlePending)
       .addCase(createSupplier.fulfilled, handleFulfilled)
       .addCase(createSupplier.rejected, handleRejected)
+      // Update
+      .addCase(updateSupplier.pending, handlePending)
+      .addCase(updateSupplier.fulfilled, handleFulfilled)
+      .addCase(updateSupplier.rejected, handleRejected)
       // Customer Detail
       .addCase(getSupplierDetail.pending, handlePending)
       .addCase(getSupplierDetail.fulfilled, (state, action) => {

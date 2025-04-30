@@ -15,11 +15,11 @@ const Suppliers = () => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { data, loading} = useSelector((state: RootState) => state.supplier);
+  const [edit, setEdit] = useState<any>(null);
 
   useEffect(() => {
     dispatch(getSuppliers({limit: 100000, sortBy: "createdAt:desc", search}));
   }, [search]);
-
 
   return (
     <>
@@ -41,10 +41,10 @@ const Suppliers = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <SupplierTable data={data} loading={loading} />
+            <SupplierTable data={data} loading={loading} setOpen={setOpen} setEdit={setEdit}/>
           </CardContent>
         </Card>
-        <AddSupplier open={open} type="global" setOpen={setOpen}/>
+        <AddSupplier open={open} type="global" setOpen={setOpen} edit={edit}/>
       </div>
     </>
   );
