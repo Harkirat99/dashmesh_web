@@ -68,6 +68,19 @@ export const createCustomer = createAsyncThunk<any , Customer, { rejectValue: st
     }
   }
 );
+
+export const updateCustomer = createAsyncThunk<any, any, { rejectValue: string }>(
+  'customer/updateCustomer',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await api.patch<any>(`customer/${payload?.id}`, payload);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
 const initialState: any = {
   data: null,
   loading: false,
@@ -96,6 +109,10 @@ const customerSlice: any = createSlice({
       .addCase(createCustomer.pending, handlePending)
       .addCase(createCustomer.fulfilled, handleFulfilled)
       .addCase(createCustomer.rejected, handleRejected)
+      // Customer Update
+      .addCase(updateCustomer.pending, handlePending)
+      .addCase(updateCustomer.fulfilled, handleFulfilled)
+      .addCase(updateCustomer.rejected, handleRejected)
       // Customer Detail
       .addCase(getCustomerDetail.pending, handlePending)
       .addCase(getCustomerDetail.fulfilled, (state, action) => {

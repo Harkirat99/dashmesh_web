@@ -13,13 +13,14 @@ import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { createCustomer, getCustomers } from "@/store/slices/customerSlice";
+import { createCustomer, getCustomers, updateCustomer } from "@/store/slices/customerSlice";
 import { toast } from "sonner";
 
 interface FormProps {
   open: boolean;
   type: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  edit?: any;
 }
 const defaultValues = {
   firstName: "",
@@ -30,7 +31,8 @@ const defaultValues = {
   fatherName: "",
   status: "active",
 };
-export function CustomerForm({ open, type, setOpen }: FormProps) {
+export function CustomerForm({ open, type, setOpen, edit }: FormProps) {
+
   const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState(defaultValues);
 
@@ -44,11 +46,17 @@ export function CustomerForm({ open, type, setOpen }: FormProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await dispatch(createCustomer(formData)).unwrap();
-      setOpen(false);
+    
+      if(edit) {
+        await dispatch(updateCustomer({id: edit?.id, ...formData})).unwrap();
+        toast("Updated successfully");
+      }else{
+        await dispatch(createCustomer(formData)).unwrap();
+        toast("Created successfully");
+      }
       resetForm();
       await dispatch(getCustomers({})).unwrap();
-      toast("Created successfully");
+      setOpen(false);
     } catch (err) {
       toast.error(err?.toString());
     }
@@ -61,6 +69,12 @@ export function CustomerForm({ open, type, setOpen }: FormProps) {
   useEffect(() => {
     if(!open) resetForm();
   }, [open])
+
+  useEffect(() => {
+    if(edit) {
+      setFormData(edit);
+    }
+  }, [edit])
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

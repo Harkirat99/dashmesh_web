@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Pencil } from "lucide-react";
 import Header from "@/components/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomers } from "@/store/slices/customerSlice";
@@ -24,6 +24,7 @@ const Customers = () => {
   const navigate = useNavigate();
   const { data, loading } = useSelector((state: RootState) => state.customer);
   const [open, setOpen] = useState(false);
+  const [edit, setEdit] = useState<any>(null);
   const [search, setSearch] = useState("");
 
 
@@ -80,8 +81,8 @@ const Customers = () => {
                       </TableRow>
                     ))
                   : Array.isArray(data) && data?.map((item: any) => (
-                      <TableRow key={item?.id} onClick={() => navigate(`${item?.id}`)} className="cursor-pointer">
-                        <TableCell className="font-medium">
+                      <TableRow key={item?.id}>
+                        <TableCell className="font-medium hover:underline cursor-pointer" onClick={() => navigate(`${item?.id}`)}>
                           {item?.firstName + " " + item?.lastName}
                         </TableCell>
                         <TableCell>{item?.number}</TableCell>
@@ -100,8 +101,8 @@ const Customers = () => {
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="sm">
-                            Edit
+                          <Button variant="ghost" size="sm" className="cursor-pointer" onClick={() => {setOpen(true); setEdit(item)}}>
+                            <Pencil className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -110,7 +111,7 @@ const Customers = () => {
             </Table>
           </CardContent>
         </Card>
-        <CustomerForm open={open} type="add" setOpen={setOpen} />
+        <CustomerForm open={open} type="add" setOpen={setOpen} edit={edit} />
       </div>
     </>
   );

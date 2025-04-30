@@ -46,13 +46,12 @@ export function CustomerLedger() {
     dispatch(getSeasonsDropdown({}));
   }, []);
 
-  console.log(ledger);
   return (
     <>
       <Header title="Customers" />
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tight">Harmeet Singh</h2>
+          <h2 className="text-3xl font-bold tracking-tight">{ledger?.metrics?.name}</h2>
           <DateSelector data={dropdown} handleDateChanged={handleDateChanged} />
         </div>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
