@@ -74,7 +74,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
     e.preventDefault();
     try {
       const formValues = form.getValues();
-      let amt = parseInt(formValues?.amount.slice(1));
+      let amt = parseInt(formValues?.amount.slice(1).replace(/,/g, ""));
       const payload = {
         customer: defaultCustomer,
         amount: formValues?.category === "discount" ? -Math.abs(amt) : amt,

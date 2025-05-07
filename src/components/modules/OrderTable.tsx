@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { formatPrice } from "@/lib/converter";
+import { RotateCcw } from "lucide-react";
 
 interface OrdersProps {
   data: [];
@@ -82,7 +83,7 @@ const OrderTable = ({ data, loading, customer }: OrdersProps) => {
                     <TableCell>{format(item?.date, "PPP")}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm">
-                        Invoice
+                        <RotateCcw className="w-4 h-4" />
                       </Button>
                     </TableCell>
                   </TableRow>

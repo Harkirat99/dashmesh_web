@@ -56,7 +56,7 @@ const ProductTable = ({ data, loading }: TransactionProps) => {
                 data?.map((item: any, index) => (
                   <TableRow key={item?.id}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell>{item?.name}</TableCell>
+                    <TableCell>{item?.name}{`(${format(item?.stock?.date, "dd-MM-yyyy")})`}</TableCell>
                     <TableCell>{item?.supplier?.name}</TableCell>
                     <TableCell>{item?.price}</TableCell>
                     <TableCell>{item?.totalPrice}</TableCell>
