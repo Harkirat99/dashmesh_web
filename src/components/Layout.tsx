@@ -28,7 +28,7 @@ const Layout = () => {
     >
       <div className="flex w-full min-h-screen">
         <AppSidebar />
-        <div className="flex-1 flex flex-col w-full">
+        <div className="flex-1 flex flex-col" style={{width: "80%" }}>
           <Outlet />
         </div>
       </div>

@@ -49,7 +49,7 @@ const Products = () => {
             Add Product
           </Button>
         </div>
-        <Card>
+        <Card >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle>Product Management</CardTitle>
             <div className="relative w-64">
@@ -57,7 +57,7 @@ const Products = () => {
               <Input placeholder="Search products..." className="pl-8" value={search} onChange={(e) => setSearch(e.target.value)}/>
             </div>
           </CardHeader>
-          <CardContent>
+            <CardContent >
             <ProductTable data={data} loading={loading} onEdit={handleEdit} />
           </CardContent>
         </Card>

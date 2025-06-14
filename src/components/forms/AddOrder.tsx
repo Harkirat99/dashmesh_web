@@ -420,7 +420,7 @@ export function AddOrder({ open, type, setOpen, editData }: FormProps) {
                       <SelectGroup>
                         {Array.isArray(dropdown) && dropdown?.map((item: any) => (
                           <SelectItem value={item?.id} key={item?.id}>
-                            {item?.name} {`(${format(item?.stock?.date, "dd-MM-yyyy")})`}
+                            {item?.name} {`(${ item?.stock?.date ? format(item?.stock?.date, "dd-MM-yyyy") : "N/A"})`}
                           </SelectItem>
                         ))}
                       </SelectGroup>

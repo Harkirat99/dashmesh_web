@@ -54,7 +54,7 @@ const ProductTable = ({ data, loading, onEdit }: TransactionProps) => {
 
   return (
     <>
-      <Card className="gap-0">
+      <Card className="gap-0" >
         <CardContent>
           <Table>
             <TableHeader>
