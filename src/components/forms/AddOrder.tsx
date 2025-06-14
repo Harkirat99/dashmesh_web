@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
-import { createOrder, getGlobalOrders } from "@/store/slices/orderSlice";
+import { createOrder, getGlobalOrders, updateOrder } from "@/store/slices/orderSlice";
 import { getCustomerDetail } from "@/store/slices/customerSlice";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -46,10 +46,12 @@ import { RootState } from "@/store/index";
 import { useParams } from "react-router-dom";
 import { deFormatPrice, formatPrice } from "@/lib/converter";
 import { getProductsDropdown } from "@/store/slices/productSlice";
+
 interface FormProps {
   open: boolean;
   type: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  editData?: any;
 }
 
 interface Item {
@@ -60,10 +62,14 @@ interface Item {
   price: string;
 }
 
-export function AddOrder({ open, type, setOpen }: FormProps) {
+export function AddOrder({ open, type, setOpen, editData }: FormProps) {
+  console.log(editData);
   const dispatch = useDispatch<AppDispatch>();
   const { data } = useSelector((state: RootState) => state.customer);
   const { dropdown } = useSelector((state: RootState) => state.product);
+
+
+  console.log("dropdown", dropdown);
   const { id } = useParams();
   const [items, setItems] = useState<Item[]>([]);
   const [quantity, setQuantity] = useState(1);
@@ -92,27 +98,51 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
 
   const handleSubmit = async () => {
     try {
-      const formattedItems = items.map((item) => {
-        return {
-          product: item?.product,
-          quantity: item?.quantity,
-          unit: item?.unit,
-          size: item?.size,
-          price: item?.price.slice(1).replace(/,/g, ""),
-        };
-      });
 
-      const payload = {
-        date: format(form.getValues().date || Date.now(), "yyyy-MM-dd"),
-        customer: defaultCustomer,
-        items: formattedItems,
-      };
-      await dispatch(createOrder(payload)).unwrap();
+      let payload;
+      if(editData) {
+        payload = {
+          date: format(form.getValues().date || Date.now(), "yyyy-MM-dd"),
+          customer: defaultCustomer,
+          product: itemForm.getValues().product,
+          quantity: itemForm.getValues().quantity,
+          unit: itemForm.getValues().unit,
+          size: itemForm.getValues().size,
+          price: itemForm.getValues().price.slice(1).replace(/,/g, ""),
+        };
+      }else {
+        const formattedItems = items.map((item) => {
+          return {
+            product: item?.product,
+            quantity: item?.quantity,
+            unit: item?.unit,
+            size: item?.size,
+            price: item?.price.slice(1).replace(/,/g, ""),
+          };
+        });
+  
+        payload = {
+          date: format(form.getValues().date || Date.now(), "yyyy-MM-dd"),
+          customer: defaultCustomer,
+          items: formattedItems,
+        };
+      }
+      
+
+      if (editData) {
+        console.log("payload -->", payload);
+        await dispatch(updateOrder({ id: editData.id, payload })).unwrap();
+        toast.success("Order updated successfully");
+      } else {
+        await dispatch(createOrder(payload)).unwrap();
+        toast.success("Order created successfully");
+      }
       setOpen(false);
       resetForm();
       await dispatch(getGlobalOrders({ customer: id })).unwrap();
-      dispatch(getCustomerDetail(`${id}`)).unwrap();
-      toast("Created successfully");
+      if(id) {
+        dispatch(getCustomerDetail(`${id}`)).unwrap();
+      }
     } catch (err) {
       toast.error(err?.toString());
     }
@@ -163,24 +193,52 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
     return formatPrice((numericPrice * quantity).toFixed(2));
   };
   const golbalGrandTotal = () => {
-    return items.reduce((acc, curr) => acc + (deFormatPrice(curr?.price) * curr?.quantity), 0);
+    return items?.reduce((acc, curr) => acc + (deFormatPrice(curr?.price) * curr?.quantity), 0);
+  }
+
+  const handleEditItem = (item: Item) => {
+    setIsNew(true);
+    setSelectedProduct(item?.product);
+    itemForm.setValue("product", item?.product);
+    itemForm.setValue("quantity", item?.quantity);
+    itemForm.setValue("size", item?.size);
+    itemForm.setValue("unit", item?.unit);
+    itemForm.setValue("price", item?.price);
+
+    // remove the item from the items array
+    const newItems = items.filter((item) => item.product !== item.product);
+    setItems(newItems);
   }
 
   useEffect(() => {
     if (open) {
       manageDefaultCustomer();
       dispatch(getProductsDropdown({})).unwrap();
+      
+      if (editData) {
+        setIsNew(true);
+        setDefaultCustomer(editData.customer.id);
+        form.setValue('date', new Date(editData.date));
+        itemForm.setValue("product", editData?.product?.id);
+        itemForm.setValue("quantity", editData?.quantity);
+        itemForm.setValue("size", editData?.size);
+        itemForm.setValue("unit", editData?.unit);
+        itemForm.setValue("price", formatPrice(editData?.price.toString()));
+        itemForm.setValue("totalPrice", formatPrice(editData?.price * editData?.quantity));
+        itemForm.setValue("orgPrice", formatPrice(editData?.price.toString()));
+        setSelectedProduct(editData?.product);
+      }
     }
-  }, [open]);
+  }, [open, editData]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {/* <DialogOverlay> */}
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{type == "add" ? "Add" : "Edit"} Order</DialogTitle>
+          <DialogTitle>{editData ? "Edit" : type == "add" ? "Add" : "Edit"} Order</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Make changes to your order here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -255,17 +313,27 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
             />
             <div className="col-span-2 w-full">
               <div className="flex flex-col gap-4 w-full">
-                {items.map((item: Item, index: number) => {
+                {items?.map((item: Item, index: number) => {
                   const product = dropdown.find(
                     (val: any) => val.id === item?.product
                   );
 
                   return (
                     <Card
-                      className="p-4 shadow-sm rounded-lg w-full"
+                      className="p-4 shadow-sm rounded-lg w-full relative"
                       key={index}
                     >
-                      <CardContent className="text-sm">
+                      <div className="absolute top-2 right-2">
+                        <Button
+                          variant="ghost" 
+                          size="icon"
+                          className="h-8 w-8 hover:bg-gray-100"
+                          onClick={() => handleEditItem(item)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        </Button>
+                      </div>
+                      <CardContent className="text-sm pt-4">
                         <div className="flex justify-between">
                           <p className="font-medium">
                             {product?.name || "N/A"}
@@ -292,7 +360,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                   );
                 })}
               </div>
-              {!isNew && (
+              {!isNew && !editData && (
                 <div className="flex justify-end mt-4">
                   <Button onClick={() => setIsNew(true)}>Add Item</Button>
                 </div>
@@ -350,7 +418,7 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {dropdown?.map((item: any) => (
+                        {Array.isArray(dropdown) && dropdown?.map((item: any) => (
                           <SelectItem value={item?.id} key={item?.id}>
                             {item?.name} {`(${format(item?.stock?.date, "dd-MM-yyyy")})`}
                           </SelectItem>
@@ -504,7 +572,8 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                     </FormItem>
                   )}
                 />
-                <div className="col-span-2 flex justify-end gap-2.5">
+                {!editData && (
+                  <div className="col-span-2 flex justify-end gap-2.5">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -517,17 +586,21 @@ export function AddOrder({ open, type, setOpen }: FormProps) {
                   </Button>
                   <Button type="submit">Submit</Button>
                 </div>
+                )}
+                  
               </form>
             </Form>
           </Card>
 
         )}
-         <div className="w-full p-3 border border-dashed rounded-xl space-y-2 text-sm font-medium">
-          <div className="flex justify-between font-semibold m-0">
-            <span>Grand Total.</span>
-            <span>{formatPrice(golbalGrandTotal())}</span>
+        {!editData && (
+          <div className="w-full p-3 border border-dashed rounded-xl space-y-2 text-sm font-medium">
+            <div className="flex justify-between font-semibold m-0">
+              <span>Grand Total.</span>
+              <span>{formatPrice(golbalGrandTotal())}</span>
+            </div>
           </div>
-        </div>
+        )}
         <div className="text-center">
           <Button type="button" className="w-[50%]" onClick={handleSubmit}>
             Save changes

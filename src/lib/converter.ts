@@ -27,7 +27,7 @@ export const formatPrice = (value: any) => {
 
   export const deFormatPrice = (value: any) => {
     if(value){
-      return value.slice(1).replace(/,/g, "");
+      return value?.slice(1)?.replace(/,/g, "");
     }else{
       return 0
     }

@@ -21,7 +21,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { PDFViewer } from "@react-pdf/renderer";
 import { BillPdf } from "./BillPdf";
-
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import InvoicePDF from '@/components/pdf/Invoice';
 export function CustomerLedger() {
   const { id } = useParams();
   const dispatch = useDispatch<AppDispatch>();
@@ -165,6 +166,12 @@ export function CustomerLedger() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <PDFDownloadLink document={<InvoicePDF />} fileName="invoice.pdf">
+      {({ blob, url, loading, error }) =>
+        loading ? 'Loading document...' : 'Download Invoice PDF'
+      }
+    </PDFDownloadLink>
 </div>
     </>
   );

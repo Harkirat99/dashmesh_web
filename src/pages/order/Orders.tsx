@@ -19,6 +19,7 @@ const Orders = () => {
   const { data, loading } = useSelector((state: RootState) => state.order);
   const [searchParams] = useSearchParams();
   const customer = searchParams.get("customer") || "";
+  const [editData, setEditData] = useState<any>(null);
 
   useEffect(() => {
     let conditionObj: { [key: string]: any } = {
@@ -37,13 +38,23 @@ const Orders = () => {
     dispatch(getCustomers({}));
   }, []);
 
+  const handleEdit = (order: any) => {
+    setEditData(order);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setEditData(null);
+  };
+
   return (
     <>
       <Header title="Orders" />
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
-          <Button onClick={() => setOpen(!open)}>
+          <Button onClick={() => setOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add Order
           </Button>
@@ -62,10 +73,21 @@ const Orders = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <OrderTable data={data} loading={loading} showCustomers={true} customer={customer}/>
+            <OrderTable 
+              data={data} 
+              loading={loading} 
+              showCustomers={true} 
+              customer={customer}
+              onEdit={handleEdit}
+            />
           </CardContent>
         </Card>
-        <AddOrder open={open} type="global" setOpen={setOpen} />
+        <AddOrder 
+          open={open} 
+          type="global" 
+          setOpen={handleClose}
+          editData={editData}
+        />
       </div>
     </>
   );

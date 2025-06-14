@@ -48,6 +48,30 @@ export const createTransaction = createAsyncThunk<any , Transaction, { rejectVal
   }
 );
 
+export const updateTransaction = createAsyncThunk<any, { id: string } & Transaction, { rejectValue: string }>(
+  'transaction/updateTransaction',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { id, ...data } = payload;
+      const response = await api.patch<any>(`transaction/${id}`, data);
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
+export const deleteTransaction = createAsyncThunk<any, string, { rejectValue: string }>(
+  'transaction/deleteTransaction',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.delete<any>(`transaction/${id}`);
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
 
 const initialState: any = {
   data: null,
@@ -83,6 +107,14 @@ const transactionSlice: any = createSlice({
       .addCase(createTransaction.pending, handlePending)
       .addCase(createTransaction.fulfilled, handleFulfilled)
       .addCase(createTransaction.rejected, handleRejected)
+      // Transaction Update
+      .addCase(updateTransaction.pending, handlePending)
+      .addCase(updateTransaction.fulfilled, handleFulfilled)
+      .addCase(updateTransaction.rejected, handleRejected)
+      // Transaction Delete
+      .addCase(deleteTransaction.pending, handlePending)
+      .addCase(deleteTransaction.fulfilled, handleFulfilled)
+      .addCase(deleteTransaction.rejected, handleRejected)
   },
 })as Slice<TransactionState, typeof transactionSlice.reducers, 'transaction'> & { reducer: any };;
 

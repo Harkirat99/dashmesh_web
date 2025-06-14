@@ -31,6 +31,31 @@ export const getProducts = createAsyncThunk<any, any, { rejectValue: string }>(
   }
 );
 
+export const updateProduct = createAsyncThunk<any, { id: string; data: any }, { rejectValue: string }>(
+  "product/updateProduct",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { id, data } = payload;
+      const response = await api.put<any>(`product/${id}`, data);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || "Request failed");
+    }
+  }
+);
+
+export const deleteProduct = createAsyncThunk<any, string, { rejectValue: string }>(
+  "product/deleteProduct",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.delete<any>(`product/${id}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || "Request failed");
+    }
+  }
+);
+
 export const getProductsDropdown = createAsyncThunk<
   any,
   any,
@@ -68,6 +93,14 @@ const productSlice: any = createSlice({
         state.data = action.payload.results;
       })
       .addCase(getProducts.rejected, handleRejected)
+      // Update Product
+      .addCase(updateProduct.pending, handlePending)
+      .addCase(updateProduct.fulfilled, handleFulfilled)
+      .addCase(updateProduct.rejected, handleRejected)
+      // Delete Product
+      .addCase(deleteProduct.pending, handlePending)
+      .addCase(deleteProduct.fulfilled, handleFulfilled)
+      .addCase(deleteProduct.rejected, handleRejected)
       // Dropdown
       .addCase(getProductsDropdown.pending, handlePending)
       .addCase(getProductsDropdown.fulfilled, (state, action) => {

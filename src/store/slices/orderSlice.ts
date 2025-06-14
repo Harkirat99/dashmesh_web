@@ -34,11 +34,35 @@ export const getGlobalOrders = createAsyncThunk<any , any, { rejectValue: string
   }
 );
 
-export const createOrder = createAsyncThunk<any , Order, { rejectValue: string }>(
+export const createOrder = createAsyncThunk<any , any, { rejectValue: string }>(
   'customer/createOrder',
   async (payload, { rejectWithValue }) => {
     try {
       const response = await api.post<any>('order', payload);
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
+export const updateOrder = createAsyncThunk<any , { id: string, payload: any }, { rejectValue: string }>(
+  'order/updateOrder',
+  async ({ id, payload }, { rejectWithValue }) => {
+    try {
+      const response = await api.patch<any>(`order/${id}`, payload);
+      return response.data;  
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data?.message || 'Request failed');
+    }
+  }
+);
+
+export const deleteOrder = createAsyncThunk<any , string, { rejectValue: string }>(
+  'order/deleteOrder',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.delete<any>(`order/${id}`);
       return response.data;  
     } catch (error: any) {
       return rejectWithValue(error?.response?.data?.message || 'Request failed');
@@ -80,6 +104,14 @@ const orderSlice: any = createSlice({
       .addCase(createOrder.pending, handlePending)
       .addCase(createOrder.fulfilled, handleFulfilled)
       .addCase(createOrder.rejected, handleRejected)
+      // Update Order
+      .addCase(updateOrder.pending, handlePending)
+      .addCase(updateOrder.fulfilled, handleFulfilled)
+      .addCase(updateOrder.rejected, handleRejected)
+      // Delete Order
+      .addCase(deleteOrder.pending, handlePending)
+      .addCase(deleteOrder.fulfilled, handleFulfilled)
+      .addCase(deleteOrder.rejected, handleRejected)
   },
 })as Slice<OrderState, typeof orderSlice.reducers, 'order'> & { reducer: any };;
 

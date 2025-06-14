@@ -14,7 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "@/store/index";
 import {
   createTransaction,
-  getGlobalTransactions
+  getGlobalTransactions,
+  updateTransaction
 } from "@/store/slices/transactionSlice";
 import {
   getCustomerDetail
@@ -53,9 +54,10 @@ interface FormProps {
   open: boolean;
   type: string;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  editData?: any;
 }
 
-export function AddTransaction({ open, type, setOpen }: FormProps) {
+export function AddTransaction({ open, setOpen, editData }: FormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams();
   const { data } = useSelector((state: RootState) => state.customer);
@@ -70,6 +72,18 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
     },
   });
 
+  useEffect(() => {
+    if (editData) {
+      form.reset({
+        date: new Date(editData.date),
+        amount: formatPrice(editData.amount.toString()),
+        paymentType: editData.paymentType,
+        category: editData.category
+      });
+      setDefaultCustomer(editData.customer.id);
+    }
+  }, [editData]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
@@ -82,13 +96,22 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
         category: formValues?.category,
         date: format(formValues?.date || Date.now(), "yyyy-MM-dd"),
       };
-      console.log(payload);
-      await dispatch(createTransaction(payload)).unwrap();
+
+
+      if (editData) {
+        const { customer, ...updatePayload } = payload;
+        await dispatch(updateTransaction({ id: editData.id, ...updatePayload })).unwrap();
+      } else {
+        await dispatch(createTransaction(payload)).unwrap();
+      }
+      
       setOpen(false);
       form.reset();
       await dispatch(getGlobalTransactions({ customer: id })).unwrap();
-      dispatch(getCustomerDetail(`${id}`)).unwrap();
-      toast("Created successfully");
+      if (id) {
+        dispatch(getCustomerDetail(`${id}`)).unwrap();
+      }
+      toast(editData ? "Updated successfully" : "Created successfully");
     } catch (err) {
       toast.error(err?.toString());
     }
@@ -124,7 +147,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{type == "add" ? "Add" : "Edit"} Transaction</DialogTitle>
+          <DialogTitle>{editData ? "Edit" : "Add"} Transaction</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -134,7 +157,7 @@ export function AddTransaction({ open, type, setOpen }: FormProps) {
             <div className="grid gap-2">
               <Label htmlFor="text">Customer *</Label>
               <Select
-                disabled={!Array.isArray(data)}
+                disabled={!Array.isArray(data) || editData}
                 value={defaultCustomer}
                 onValueChange={(value) => setDefaultCustomer(value)}
               >

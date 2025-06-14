@@ -15,7 +15,7 @@ export interface Order {
 }
 
 export interface Transaction {
-    customer: string,
+    customer?: string,
     date: string,
     paymentType: string,
     amount: number
