@@ -7,17 +7,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import ProductTable from "@/components/modules/ProductTable";
+// import ProductTable from "@/components/modules/ProductTable";
 import AddProduct from "@/components/forms/AddProduct";
 
 const Products = () => {
   const [open, setOpen] = useState(false);
   const [editData, setEditData] = useState<any>(null);
 
-  const handleEdit = (product: any) => {
-    setEditData(product);
-    setOpen(true);
-  };
+  // const handleEdit = (product: any) => {
+  //   setEditData(product);
+  //   setOpen(true);
+  // };
 
   const handleSuccess = () => {
     setOpen(false);
@@ -34,7 +34,7 @@ const Products = () => {
         </Button>
       </div>
 
-      <ProductTable onEdit={handleEdit} />
+      {/* <ProductTable onEdit={handleEdit} /> */}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
