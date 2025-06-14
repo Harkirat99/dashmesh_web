@@ -168,7 +168,7 @@ export function CustomerLedger() {
       </Dialog>
 
       <PDFDownloadLink document={<InvoicePDF />} fileName="invoice.pdf">
-      {({ blob, url, loading, error }) =>
+      {({ loading }) =>
         loading ? 'Loading document...' : 'Download Invoice PDF'
       }
     </PDFDownloadLink>

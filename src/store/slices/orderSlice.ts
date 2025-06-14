@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, Slice } from '@reduxjs/toolkit';
 import api from '../../connection/axios';
 import { handlePending, handleFulfilled, handleRejected } from '../asyncHandlers';
-import { Order } from "../../types/common"
 
 interface OrderState {
   data: any | null;
